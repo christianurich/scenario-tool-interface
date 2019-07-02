@@ -21,7 +21,8 @@ pytest==4.6.3
 pytest-cov==2.7.1
 pytz==2019.1
 requests==2.22.0
--e git+https://github.com/christianurich/scenario-tool-interface.git@8fc7d7a942caf403a8ad9345baf179d5d9532710#egg=scenario_tool_interface
+# Editable Git install with no remote
+-e .
 six==1.12.0
 snowballstemmer==1.9.0
 Sphinx==2.1.2
