@@ -12,6 +12,7 @@ import os
 import sys
 import inspect
 import shutil
+import sphinx_rtd_theme
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
@@ -45,7 +46,7 @@ try:
     import sphinx
     from pkg_resources import parse_version
 
-    cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
+    cmd_line_template = "sphinx-apidoc -M -f -o {outputdir} {moduledir} -E"
     cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
 
     args = cmd_line.split(" ")
@@ -81,7 +82,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'scenario-tool-interface'
+project = u'Scenario Tool Interface'
 copyright = u'2019, Christian Urich'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -89,7 +90,7 @@ copyright = u'2019, Christian Urich'
 # built documents.
 #
 # The short X.Y version.
-version = ''  # Is set by calling `setup.py docs`
+version = '0.0.1'  # Is set by calling `setup.py docs`
 # The full version, including alpha/beta/rc tags.
 release = ''  # Is set by calling `setup.py docs`
 
@@ -135,7 +136,10 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
+
 html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

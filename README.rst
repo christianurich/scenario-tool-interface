@@ -1,19 +1,22 @@
 =======================
-scenario-tool-interface
+Scenario Tool Interface
 =======================
 
 
-Add a short description here!
+Python interface to the scenario-tool https://www.wsc-scenario.org.au
+
 
 
 Description
 ===========
 
-A longer description of your project goes here...
+The Scenario Tool Interface provides an easy to use Python interface to the Scenario-Tool's REST api.
+It provides power users with the ability to create create project, create complex workflows and run sensitivity
+and run sensitivity and uncertainty analysis. Combined with powerful python notebook's and data analysis tools
+such as pandas if provides a powerful tool to gain insights for complex integrated urban water management strategies.
 
 
-Note
-====
+The API is in its early development stages and feedback on its usability and improvements to the functionality and
+very welcome.
 
-This project has been set up using PyScaffold 3.1. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
+
