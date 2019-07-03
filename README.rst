@@ -20,3 +20,8 @@ The API is in its early development stages and feedback on its usability and imp
 very welcome.
 
 
+Install
+=======
+
+
+pip install git+ssh://git@github.com/christianurich/scenario-tool-interface.git
