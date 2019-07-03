@@ -51,7 +51,7 @@ Further for each model the performance assessment model may be defined.
 
     # Set project parameters
     sti.update_project(token, project_id, {
-        "name": "my project,
+        "name": "my project",
         "active": True,
         'region_id': region_id,
         "case_study_area_id": geojson_id,
