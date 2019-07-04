@@ -24,4 +24,4 @@ Install
 =======
 
 
-pip install git+ssh://git@github.com/christianurich/scenario-tool-interface.git
+pip install scenario-tool-interface
