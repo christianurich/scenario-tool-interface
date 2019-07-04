@@ -2,6 +2,7 @@ import pytest
 import scenario_tool_interface.sti as sti
 import json
 import time
+from . import credentials
 
 __author__ = "Christian Urich"
 __copyright__ = "Christian Urich"
@@ -9,13 +10,13 @@ __license__ = "mit"
 
 
 def test_login():
-    assert type(sti.login("admin@danceplatform.org", "password")) is str
+    assert type(sti.login(credentials.USERNAME, credentials.PASSWORD)) is str
     with pytest.raises(Exception) as e_info:
-        sti.login("admin@danceplatform.org", "passwod")
+        sti.login(credentials.USERNAME, "passwod")
 
 
 def test_get_region():
-    token = sti.login("admin@danceplatform.org", "password")
+    token = sti.login(credentials.USERNAME, credentials.PASSWORD)
 
     assert type(sti.get_region(token, "melbourne")) is int
 
@@ -24,7 +25,7 @@ def test_get_region():
 
 
 def test_get_assessment_model():
-    token = sti.login("admin@danceplatform.org", "password")
+    token = sti.login(credentials.USERNAME, credentials.PASSWORD)
 
     assert type(sti.get_assessment_model(token, "Land Surface Temperature")) is int
 
@@ -34,7 +35,7 @@ def test_get_assessment_model():
 
 def test_run_tutorial():
     # Login with your username and password
-    token = sti.login("admin@danceplatform.org", "password")
+    token = sti.login(credentials.USERNAME, credentials.PASSWORD)
 
     assert type(token) is str
     # Create a new project

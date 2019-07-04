@@ -21,6 +21,7 @@ __pycache__/*
 .idea
 tags
 
+
 # Package files
 *.egg
 *.eggs/
@@ -48,3 +49,6 @@ MANIFEST
 # Per-project virtualenvs
 .venv*/
 venv*/
+
+#Passwords
+credentials.py
