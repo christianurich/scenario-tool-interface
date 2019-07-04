@@ -25,3 +25,10 @@ Install
 
 
 pip install scenario-tool-interface
+
+
+Documentation
+=============
+
+https://scenario-tool-interface.readthedocs.io
+
