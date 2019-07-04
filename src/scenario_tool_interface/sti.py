@@ -245,7 +245,7 @@ def upload_geojson(token, geojson, project_id):
     :param project_id: project the node will be assigned to
     :type token: str
     :type geojson: str
-    :type project_id: str
+    :type project_id: int
     :return: geojson id
     :rtype: int
     """
