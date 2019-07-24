@@ -11,7 +11,7 @@ dance_url = "https://devsql.dance4water.org/resultsdb/"
 
 
 def db_name(simulation_id):
-    return '/mnt/s3/dynamind/' + str(simulation_id) + '_export_v2_1.sqlite'
+    return simulation_id
 
 
 def run_query(token, scenario_id, query):
@@ -35,7 +35,7 @@ def run_query(token, scenario_id, query):
             'query': query}
     r = requests.post(dance_url, data=data)
     if r.status_code == 200:
-        result = json.loads(r.json())
+        result = r.json()
         return result
     raise Exception(f"Unable to run query {r.status_code}")
 
