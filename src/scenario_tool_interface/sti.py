@@ -6,8 +6,8 @@ import json
 import time
 
 
-url = "https://apiv2.dance4water.org/api"
-dance_url = "https://sqlitev2.dance4water.org/resultsdb/"
+url = "https://devapi.dance4water.org/api"
+dance_url = "https://devsql.dance4water.org/resultsdb/"
 
 
 def db_name(simulation_id):
@@ -438,6 +438,25 @@ def show_nodes(token):
     smnodes = r.json()["scenario_maker_nodes"]
     for node in smnodes:
         print(node["id"], node["name"])
+
+
+def get_nodes(token):
+    """
+    Return list of available nodes
+
+    :param token: Access token
+    :type token: str
+
+    :return: returns a dict of all scenario
+    :rtype: dict
+    """
+    r = get_scenario_workflow_nodes(token)
+    if not r.status_code == 200:
+        raise Exception(f"Could not get scenario workflow nodes")
+
+    smnodes = r.json()["scenario_maker_nodes"]
+
+    return smnodes
 
 
 def show_scenarios(token, project_id):
