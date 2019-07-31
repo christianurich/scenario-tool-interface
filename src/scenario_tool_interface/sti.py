@@ -44,6 +44,10 @@ def add_node(token, node_data):
     headers = {"Authorization": "Bearer " + token}
     return requests.post(url + "/sm_node", headers=headers, json=node_data)
 
+def update_sm_node(token, node_id, node_data):
+    headers = {"Authorization": "Bearer " + token}
+    return requests.post(url + "/sm_node/" + str(node_id)+ "/versions" , headers=headers, json=node_data)
+
 
 def add_model(token, name, src):
     headers = {"Authorization": "Bearer " + token}
@@ -349,10 +353,11 @@ def get_simulations(token, scenario):
     return requests.get(url + "/scenario/" + str(scenario) + "/simulations", headers=headers)
 
 
-def load_model(name, filename):
+def upload_dynamind_model(token, name, filename):
     """
     Uploads a new model to the server
 
+    :param token: access token
     :param name: model name
     :param filename: dynamind file
     :type str
@@ -360,8 +365,6 @@ def load_model(name, filename):
     :return: model_id
     :rtype: int
     """
-    token = login("admin@danceplatform.org", "password")
-
     with open(filename, 'r') as file:
         data = file.read().replace('\n', '')
 
@@ -377,16 +380,57 @@ def show_node_versions(token, node_id):
     return requests.get(url + "/sm_node/" + str(node_id), headers=headers)
 
 
-def add_description(filename, model_id = None):
-    token = login("admin@danceplatform.org", "password")
+def create_node(token, filename, model_id = None):
+    """
+    Create a new node
 
+    :param token: access token
+    :param filename: point to json file containing the node description
+    :param model_id: model id in json file will be replaced by this. If not set model_id from json file
+    :type str
+    :type str
+    :type int
+    :return: node_id
+    :rtype: int
+    """
     with open(filename) as json_file:
         node_data = json.load(json_file)
 
     if model_id is not None:
         node_data["models"][0]["id"] = model_id
-    add_node(token, node_data)
+    r = add_node(token, node_data)
 
+    if r.status_code == 200:
+        result = r.json()
+        return result["node_id"]
+    raise Exception(f"Unable to add node {r.status_code}")
+
+def update_node(token, node_id, filename, model_id = None):
+    """
+    Update an existing node
+
+    :param token: access token
+    :param node_id: id of node
+    :param filename: point to json file containing the node description
+    :param model_id: model id in json file will be replaced by this. If not set model_id from json file
+    :type str
+    :type str
+    :type str
+    :type int
+    :return: node_id
+    :rtype: int
+    """
+    with open(filename) as json_file:
+        node_data = json.load(json_file)
+
+    if model_id is not None:
+        node_data["models"][0]["id"] = model_id
+    r = update_sm_node(token, node_id, node_data)
+
+    if r.status_code == 200:
+        result = r.json()
+        return result["node_version_id"]
+    raise Exception(f"Unable to update node {r.status_code}")
 
 def get_baseline(token, project_id):
     """
@@ -520,40 +564,112 @@ def show_log(token, scenario_id):
     return database_id
 
 
-def add_assessment_model(token, data):
+def create_assessment_model(token, filename, model_id=None):
     """
-        Creates a new assessment model and a default version tagged as 0.0.1
-        the data must be of the shape:
+    Creates a new assessment model and a default version tagged as 0.0.1
+    the data must be of the shape:
 
-        .. code-block::
+    :param token: Access token
+    :param filename: filename of json file (see below)
+    :param model_id: dynamind model id
+    :type token: str
+    :type filename: str
+    :type model_id: int
 
-            {
-               name: "some name",
-               description: "some desc",
+    .. code-block::
 
-               //optionally add assessment model stage of development
-               //1 = ALPHA
-               //2 = BETA
-               //3 = UNDER DEVELOPMENT
-               //default is 3
-               stage: 2
-               //must specify one of:
-               model_id: <model_id> //by default will use the active version of this model
-               model_version_id: <model_version_id> //if present will use this model version id
-            }
+        {
+           name: "some name",
+           description: "some desc",
 
-        returns:
+           //optionally add assessment model stage of development
+           //1 = ALPHA
+           //2 = BETA
+           //3 = UNDER DEVELOPMENT
+           //default is 3
+           stage: 2
+           //must specify one of:
+           model_id: <model_id> //by default will use the active version of this model
+           model_version_id: <model_version_id> //if present will use this model version id
+        }
 
-        .. code-block::
+    returns:
 
-            {
-              assessment_model_id: <the id of the new assessment model>,
-              assessment_model_version_id: <id of the new default version>
-            }
+    .. code-block::
+
+        {
+          assessment_model_id: <the id of the new assessment model>,
+          assessment_model_version_id: <id of the new default version>
+        }
 
     """
+
+    with open(filename) as json_file:
+        node_data = json.load(json_file)
+
+    if model_id is not None:
+        node_data["model_id"] = model_id
 
     headers = {"Authorization": "Bearer " + token}
-    return requests.post(url + "/assessment_models", headers=headers, json=data)
+    r = requests.post(url + "/assessment_models", headers=headers, json=node_data)
 
+    if r.status_code == 200:
+        result = r.json()
+        return result["assessment_model_id"]
+    raise Exception(f"Unable to create assessment model {r.status_code}")
+
+def update_assessment_model(token, assessment_model_id, filename, model_id):
+    """
+    Creates a new assessment model and a default version tagged as 0.0.1
+    the data must be of the shape:
+
+    :param token: Access token
+    :param assessment_model_id: assessment model id to be updated
+    :param filename: filename of json file (see below)
+    :param model_id: dynamind model id
+    :type token: str
+    :type assessment_model_id: int
+    :type filename: str
+    :type model_id: int
+
+    .. code-block::
+
+        {
+           name: "some name",
+           description: "some desc",
+
+           //optionally add assessment model stage of development
+           //1 = ALPHA
+           //2 = BETA
+           //3 = UNDER DEVELOPMENT
+           //default is 3
+           stage: 2
+           //must specify one of:
+           model_id: <model_id> //by default will use the active version of this model
+           model_version_id: <model_version_id> //if present will use this model version id
+        }
+
+    returns:
+
+    .. code-block::
+
+        {
+          assessment_model_id: <the id of the new assessment model>,
+          assessment_model_version_id: <id of the new default version>
+        }
+
+    """
+    with open(filename) as json_file:
+        node_data = json.load(json_file)
+
+    if model_id is not None:
+        node_data["model_id"] = model_id
+
+    headers = {"Authorization": "Bearer " + token}
+    print(f"{url}/assessment_models/{assessment_model_id}/versions")
+    r = requests.post(f"{url}/assessment_models/{assessment_model_id}/versions", headers=headers, json=node_data)
+    if r.status_code == 200:
+        result = r.json()
+        return result["assessment_model_version_id"]
+    raise Exception(f"Unable to update assessment model {r.status_code}")
 

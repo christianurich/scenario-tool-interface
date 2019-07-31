@@ -32,6 +32,50 @@ def test_get_assessment_model():
     with pytest.raises(Exception) as e_info:
         sti.login(sti.get_assessment_model(token, "Land Surface Temperatur"))
 
+def test_nodes():
+    # Login with your username and password
+    token = sti.login(USERNAME, PASSWORD)
+
+    assert type(token) is str
+
+    model_id = sti.upload_dynamind_model(token, "test node", "../resources/nodes/test_node.dyn")
+
+    assert type(model_id) is int
+
+    node_id = sti.create_node(token, "../resources/nodes/test_node.json", model_id)
+
+    assert type(node_id) is int
+
+    model_id = sti.upload_dynamind_model(token, "test node", "../resources/nodes/test_node.dyn")
+
+    assert type(model_id) is int
+
+    node_version_id = sti.update_node(token, node_id, "../resources/nodes/test_node.json", model_id)
+
+    assert type(node_version_id) is int
+
+def test_assessment_models():
+    # Login with your username and password
+    token = sti.login(USERNAME, PASSWORD)
+
+    assert type(token) is str
+
+    model_id = sti.upload_dynamind_model(token, "test node", "../resources/assessment_nodes/test_assessment_model.dyn")
+
+    assert type(model_id) is int
+
+    node_id = sti.create_assessment_model(token, "../resources/assessment_nodes/test_assessment_model.json", model_id)
+
+    assert type(node_id) is int
+
+    model_id = sti.upload_dynamind_model(token, "test node", "../resources/assessment_nodes/test_assessment_model.dyn")
+
+    assert type(model_id) is int
+
+    node_version_id = sti.update_assessment_model(token, node_id, "../resources/assessment_nodes/test_assessment_model.json", model_id)
+
+    assert type(node_version_id) is int
+
 
 def test_run_tutorial():
     # Login with your username and password
