@@ -32,6 +32,7 @@ def test_get_assessment_model():
     with pytest.raises(Exception) as e_info:
         sti.login(sti.get_assessment_model(token, "Land Surface Temperatur"))
 
+
 def test_nodes():
     # Login with your username and password
     token = sti.login(USERNAME, PASSWORD)
@@ -46,6 +47,13 @@ def test_nodes():
 
     assert type(node_id) is int
 
+    n_id = sti.get_node_id(token, "test node")
+
+    assert n_id == node_id
+
+    with pytest.raises(Exception) as e_info:
+        sti.get_node_id(token, "test nod")
+
     model_id = sti.upload_dynamind_model(token, "test node", "../resources/nodes/test_node.dyn")
 
     assert type(model_id) is int
@@ -53,6 +61,7 @@ def test_nodes():
     node_version_id = sti.update_node(token, node_id, "../resources/nodes/test_node.json", model_id)
 
     assert type(node_version_id) is int
+
 
 def test_assessment_models():
     # Login with your username and password
@@ -88,7 +97,7 @@ def test_run_tutorial():
 
     # Obtain region code
     region_id = sti.get_region(token, "melbourne")
-    assert type(region_id) is int`
+    assert type(region_id) is int
 
     # Load geoson file
     with open("../resources/test.geojson", 'r') as file:
@@ -182,8 +191,9 @@ def test_run_tutorial():
                           scenario_id,
                           "SELECT avg(tree_cover_fraction) as tf from micro_climate_grid")
 
-        if r['status'] != 'loaded':
+        if r['status'] == 'loaded':
             # Break the loop when query is loaded
             break
+        time.sleep(1)
 
     print(r['data'])

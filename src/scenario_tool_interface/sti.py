@@ -546,7 +546,7 @@ def show_log(token, scenario_id):
     """
     Print scenario log file
 
-    :param token: Access token
+    :param token: access token
     :param scenario_id: scenario id
     :type token: str
     :type scenario_id: int
@@ -564,6 +564,22 @@ def show_log(token, scenario_id):
         print(json.loads(s)["id"],  json.loads(s)["progress"], json.loads(s)["heartbeat"], json.loads(s)["log"])
 
     return database_id
+
+
+def get_node_id(token, name):
+    """
+    Return node id to be used in simulation
+
+    :param token: access token
+    :param name: node name
+    :return: node_id
+    :rtype int
+    """
+    nodes = get_nodes(token)
+    for n in nodes:
+        if n['name'] == name:
+            return n['id']
+    raise Exception(f"Node  {name} not found")
 
 
 def create_assessment_model(token, filename, model_id=None):
