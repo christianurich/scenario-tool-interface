@@ -240,15 +240,17 @@ def get_scenario_workflow_nodes(token):
     return requests.get(url + "/sm_node/", headers=headers)
 
 
-def upload_geojson(token, geojson, project_id):
+def upload_geojson(token, geojson, project_id, name = "casestudyarea"):
     """
     Upload a geojson file and return id
 
     :param token: Assess token
     :param geojson: geojson file
     :param project_id: project the node will be assigned to
+    :param name: added option to set name of geojson file default is set to casestudyarea
     :type token: str
     :type geojson: str
+    :type name: str
     :type project_id: int
     :return: geojson id
     :rtype: int
@@ -258,7 +260,7 @@ def upload_geojson(token, geojson, project_id):
     if 'name' in geojson: del geojson['name']
 
     r = requests.post(url + "/geojson/", headers=headers,
-                         json={"project_id": project_id, "geojson": geojson, "name": "casestudyarea"})
+                         json={"project_id": project_id, "geojson": geojson, "name":name})
 
     if r.status_code == 200:
         return r.json()["id"]
