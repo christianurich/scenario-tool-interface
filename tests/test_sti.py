@@ -12,7 +12,7 @@ __license__ = "mit"
 def test_login():
     assert type(sti.login(USERNAME, PASSWORD)) is str
     with pytest.raises(Exception) as e_info:
-        sti.login(credentials.USERNAME, "passwod")
+        sti.login(USERNAME, "passwod")
 
 
 def test_get_region():
@@ -88,7 +88,7 @@ def test_run_tutorial():
 
     # Obtain region code
     region_id = sti.get_region(token, "melbourne")
-    assert type(region_id) is int
+    assert type(region_id) is int`
 
     # Load geoson file
     with open("../resources/test.geojson", 'r') as file:
