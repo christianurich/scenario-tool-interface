@@ -49,7 +49,7 @@ def test_nodes():
 
     n_id = sti.get_node_id(token, "test node")
 
-    assert n_id == node_id
+    assert type(n_id) is int
 
     with pytest.raises(Exception) as e_info:
         sti.get_node_id(token, "test nod")

@@ -93,7 +93,7 @@ or adding trees. To show a list of a available nodes use:
 
     # Nodes are defined as below
     residential_node = {
-        "node_type_id": 48,
+        "node_type_id": sti.get_node_id("Residential"),
         "area": geojson_id,
         "parameters":
             {

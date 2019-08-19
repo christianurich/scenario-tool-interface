@@ -6,8 +6,8 @@ import json
 import time
 
 
-url = "https://devapi.dance4water.org/api"
-dance_url = "https://devsql.dance4water.org/resultsdb/"
+url = "https://staging-api.dance4water.org/api"
+dance_url = "https://staging-sql.dance4water.org/resultsdb/"
 
 
 def db_name(simulation_id):
