@@ -231,7 +231,11 @@ def set_scenario_workflow(token, scenario_id, node_data):
     """
 
     headers = {"Authorization": "Bearer " + token}
-    return requests.post(url + "/scenario/" + str(scenario_id) + "/nodes", headers=headers, json=node_data)
+    r = requests.post(url + "/scenario/" + str(scenario_id) + "/nodes", headers=headers, json=node_data)
+    if r.status_code == 200:
+        return
+
+    raise Exception(f"Something went wrong when adding the nodes {r.status_code} {r.json()}")
 
 
 def get_scenario_workflow_nodes(token):
@@ -641,7 +645,7 @@ def update_assessment_model(token, assessment_model_id, filename, model_id):
     Creates a new assessment model and a default version tagged as 0.0.1
     the data must be of the shape:
 
-    :param token: Access token
+    :param token: access token
     :param assessment_model_id: assessment model id to be updated
     :param filename: filename of json file (see below)
     :param model_id: dynamind model id
@@ -690,4 +694,22 @@ def update_assessment_model(token, assessment_model_id, filename, model_id):
         result = r.json()
         return result["assessment_model_version_id"]
     raise Exception(f"Unable to update assessment model {r.status_code}")
+
+
+def get_project_databases(token, project_id, folder="."):
+    """
+    Download project databases. Databases will be downloaded into folder/project_id.zip
+    :param token: access token
+    :param project_id: project id
+    :param folder: folder
+    :type token: str
+    :type project_id: int
+    :type folder: str
+    """
+
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.get(f"{url}/projects/{project_id}/data", headers=headers)
+    if r.status_code == 200:
+        open(f"{folder}/{project_id}.zip", 'wb').write(r.content)
+    raise Exception(f"Something went wrong while downloading the folder {r.status_code} {r.json()}")
 
