@@ -4,11 +4,19 @@
 import requests
 import json
 import time
+import enum
 
 
 url = "https://staging-api.dance4water.org/api"
 dance_url = "https://staging-sql.dance4water.org/resultsdb/"
 
+
+class AccessLevel(enum.Enum):
+    DEMO = 1
+    PARTICIPANT = 2
+    CONSULTANT = 3
+    ADMIN = 4
+    SUPERADMIN = 5
 
 def db_name(simulation_id):
     return simulation_id
@@ -386,15 +394,17 @@ def show_node_versions(token, node_id):
     return requests.get(url + "/sm_node/" + str(node_id), headers=headers)
 
 
-def create_node(token, filename, model_id = None):
+def create_node(token, filename, model_id=None, access_level=AccessLevel.SUPERADMIN.value):
     """
     Create a new node
 
     :param token: access token
     :param filename: point to json file containing the node description
     :param model_id: model id in json file will be replaced by this. If not set model_id from json file
+    :param access_level: access level of node
     :type str
     :type str
+    :type int
     :type int
     :return: node_id
     :rtype: int
@@ -404,6 +414,7 @@ def create_node(token, filename, model_id = None):
 
     if model_id is not None:
         node_data["models"][0]["id"] = model_id
+        node_data["access_level"] = access_level
     r = add_node(token, node_data)
 
     if r.status_code == 200:
@@ -411,7 +422,8 @@ def create_node(token, filename, model_id = None):
         return result["node_id"]
     raise Exception(f"Unable to add node {r.status_code}")
 
-def update_node(token, node_id, filename, model_id = None):
+
+def update_node(token, node_id, filename, model_id=None, access_level=AccessLevel.SUPERADMIN.value):
     """
     Update an existing node
 
@@ -419,9 +431,11 @@ def update_node(token, node_id, filename, model_id = None):
     :param node_id: id of node
     :param filename: point to json file containing the node description
     :param model_id: model id in json file will be replaced by this. If not set model_id from json file
+    :param access_level: access level of node
     :type str
     :type str
     :type str
+    :type int
     :type int
     :return: node_id
     :rtype: int
@@ -431,12 +445,48 @@ def update_node(token, node_id, filename, model_id = None):
 
     if model_id is not None:
         node_data["models"][0]["id"] = model_id
+        node_data["access_level"] = access_level
     r = update_sm_node(token, node_id, node_data)
 
     if r.status_code == 200:
         result = r.json()
         return result["node_version_id"]
     raise Exception(f"Unable to update node {r.status_code}")
+
+
+def set_node_access_level(token, node_id, access_level):
+    """
+    Set the access level of the parent node
+
+    :param token: access token
+    :param node_id: node id
+    :param access_level: access level (see enum)
+    :type token: str
+    :type node_id: int
+    :type access_level: int
+    """
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.post(f"{url}/sm_node/{node_id}", headers=headers, json={"access_level": access_level})
+    if r.status_code == 200:
+        return
+    raise Exception(f"Could not update access level node {r.status_code}")
+
+
+def deactivate_node(token, node_id):
+    """
+    Deactivate node
+
+    :param token: access token
+    :param node_id: node id
+    :type token: str
+    :type node_id: int
+    """
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.post(f"{url}/sm_node/{node_id}", headers=headers, json={"active": False})
+    if r.status_code == 200:
+        return
+    raise Exception(f"Could not deactivate node {r.status_code}")
+
 
 def get_baseline(token, project_id):
     """
@@ -711,5 +761,6 @@ def get_project_databases(token, project_id, folder="."):
     r = requests.get(f"{url}/projects/{project_id}/data", headers=headers)
     if r.status_code == 200:
         open(f"{folder}/{project_id}.zip", 'wb').write(r.content)
+        return
     raise Exception(f"Something went wrong while downloading the folder {r.status_code} {r.json()}")
 
