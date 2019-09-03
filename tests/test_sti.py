@@ -208,7 +208,7 @@ def test_run_tutorial():
             break
         time.sleep(1)
     # print(r['data'])
-    assert r['data'][0]['tf'] ==0.19154294966835525
+    assert r['data'][0]['tf'] == 0.06510612453007712
 
     # Should through an exception because access
     with pytest.raises(Exception) as e_info:
