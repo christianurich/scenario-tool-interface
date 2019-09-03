@@ -3,12 +3,19 @@ import scenario_tool_interface.sti as sti
 import json
 import time
 import os
-from .credentials import USERNAME, PASSWORD, USERNAME_GUEST, PASSWORD_GUEST, PASSWORD_ADMIN, USERNAME_ADMIN
+# from .credentials import
 
 __author__ = "Christian Urich"
 __copyright__ = "Christian Urich"
 __license__ = "mit"
 
+
+USERNAME = os.environ['USERNAME']
+PASSWORD = os.environ['PASSWORD']
+USERNAME_GUEST = os.environ['USERNAME_GUEST']
+PASSWORD_GUEST = os.environ['PASSWORD_GUEST']
+PASSWORD_ADMIN = os.environ['PASSWORD_ADMIN']
+USERNAME_ADMIN = os.environ['USERNAME_ADMIN']
 
 def test_login():
     assert type(sti.login(USERNAME, PASSWORD)) is str
@@ -208,7 +215,7 @@ def test_run_tutorial():
             break
         time.sleep(1)
     # print(r['data'])
-    assert r['data'][0]['tf'] ==0.19154294966835525
+    assert r['data'][0]['tf'] == 0.06510612453007712
 
     # Should through an exception because access
     with pytest.raises(Exception) as e_info:
