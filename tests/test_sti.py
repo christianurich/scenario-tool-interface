@@ -46,39 +46,39 @@ def test_get_assessment_model():
         sti.login(sti.get_assessment_model(token, "Land Surface Temperatur"))
 
 
-def test_nodes():
-    # Login with your username and password
-    token = sti.login(USERNAME, PASSWORD)
-
-    assert type(token) is str
-
-    model_id = sti.upload_dynamind_model(token, "test node", "resources/nodes/test_node.dyn")
-
-    assert type(model_id) is int
-
-    node_id = sti.create_node(token, "resources/nodes/test_node.json", model_id)
-
-    assert type(node_id) is int
-
-    n_id = sti.get_node_id(token, "test node")
-
-    assert type(n_id)
-
-    with pytest.raises(Exception) as e_info:
-        sti.get_node_id(token, "test nod")
-
-    model_id = sti.upload_dynamind_model(token, "test node", "resources/nodes/test_node.dyn")
-
-    assert type(model_id) is int
-
-    node_version_id = sti.update_node(token, node_id, "resources/nodes/test_node.json", model_id)
-
-    assert type(node_version_id) is int
-
-    sti.deactivate_node(token, node_id)
-
-    with pytest.raises(Exception) as e_info:
-        sti.get_node_id(token, "test node")
+# def test_nodes():
+#     # Login with your username and password
+#     token = sti.login(USERNAME, PASSWORD)
+#
+#     assert type(token) is str
+#
+#     model_id = sti.upload_dynamind_model(token, "test node", "resources/nodes/test_node.dyn")
+#
+#     assert type(model_id) is int
+#
+#     node_id = sti.create_node(token, "resources/nodes/test_node.json", model_id)
+#
+#     assert type(node_id) is int
+#
+#     n_id = sti.get_node_id(token, "test node")
+#
+#     assert type(n_id)
+#
+#     with pytest.raises(Exception) as e_info:
+#         sti.get_node_id(token, "test nod")
+#
+#     model_id = sti.upload_dynamind_model(token, "test node", "resources/nodes/test_node.dyn")
+#
+#     assert type(model_id) is int
+#
+#     node_version_id = sti.update_node(token, node_id, "resources/nodes/test_node.json", model_id)
+#
+#     assert type(node_version_id) is int
+#
+#     sti.deactivate_node(token, node_id)
+#
+#     with pytest.raises(Exception) as e_info:
+#         sti.get_node_id(token, "test node")
 
 
 
