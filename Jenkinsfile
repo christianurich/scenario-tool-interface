@@ -3,8 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh '''docker rm -f sample
-docker image build -t scenario-tool-interface .'''
+        sh 'docker image build -t scenario-tool-interface .'
       }
     }
   }
