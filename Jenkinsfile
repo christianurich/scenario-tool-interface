@@ -18,8 +18,8 @@ docker rm -f sample'''
     }
   }
   environment {
-    PASSWORD = 'credentials(\'test@unit.com\')'
-    PASSWORD_GUEST = 'credentials(\'guest@unit.com\')'
-    PASSWORD_ADMIN = 'credentials(\'admin@danceplatform.org\')'
+    PASSWORD = credentials('test@unit.com')
+    PASSWORD_GUEST = credentials('guest@unit.com')
+    PASSWORD_ADMIN = credentials('admin@danceplatform.org')
   }
 }
