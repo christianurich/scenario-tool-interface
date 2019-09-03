@@ -5,4 +5,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-RUN python -m pytest
+CMD python -m pytest 
