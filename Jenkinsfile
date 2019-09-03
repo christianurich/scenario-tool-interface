@@ -13,6 +13,7 @@ docker run --name sample -e USERNAME="test@unit.com" -e PASSWORD="rejudo01" -e U
 set -e'''
         sh '''docker cp sample:/tmp/test.xml .
 docker rm -f sample'''
+        junit 'test.xml'
       }
     }
   }
