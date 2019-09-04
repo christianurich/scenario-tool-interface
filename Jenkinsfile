@@ -22,7 +22,6 @@ docker rm -f $UNIQUE_ID'''
              }
             steps {
                 echo 'Deploy to pypy'
-                sh 'make deploy'
                 sh 'python setup.py sdist'
                 sh 'twine upload dist/* -u $USERNAME_PYPI -p $PASSWORD_PYPI'
             }
