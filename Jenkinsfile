@@ -23,7 +23,7 @@ docker rm -f $UNIQUE_ID'''
             steps {
                 echo 'Deploy to pypy'
                 sh 'docker image build -t scenario-tool-interface-deploy -f DockerfileDeploy .'
-                sh 'docker run --name $UNIQUE_ID_deploy -e $USERNAME_PYPI=$USERNAME_PYPI -e $PASSWORD_PYPI=$PASSWORD_PYPI scenario-tool-interface-deploy'
+                sh 'docker run --name $UNIQUE_ID_deploy -e USERNAME_PYPI=$USERNAME_PYPI -e PASSWORD_PYPI=$PASSWORD_PYPI scenario-tool-interface-deploy'
                 sh 'docker rm -f $UNIQUE_ID_deploy'
             }
         }
