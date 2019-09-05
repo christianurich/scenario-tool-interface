@@ -214,9 +214,9 @@ def test_run_tutorial():
             # Break the loop when query is loaded
             break
         time.sleep(1)
-    # print(r['data'])
-    assert type(r['data'][0]['tf']) is float
-    #== 0.06510612453007712
+    print(r['data'])
+    assert r['data'][0]['tf'] == 0.06510612453007712
+
 
     # Should through an exception because access
     with pytest.raises(Exception) as e_info:
