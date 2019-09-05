@@ -18,7 +18,7 @@ docker rm -f $UNIQUE_ID'''
     }
     stage('Deploy') {
             when {
-            expression { tag "v*" && (currentBuild.result == null || currentBuild.result == 'SUCCESS' )}
+            expression { tag "v*" && currentBuild.result == 'SUCCESS' }
              }
             steps {
                 echo 'Deploy to pypy'
