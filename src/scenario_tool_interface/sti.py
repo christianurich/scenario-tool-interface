@@ -54,7 +54,7 @@ def add_node(token, node_data):
 
 def update_sm_node(token, node_id, node_data):
     headers = {"Authorization": "Bearer " + token}
-    return requests.post(url + "/sm_node/" + str(node_id)+ "/versions" , headers=headers, json=node_data)
+    return requests.post(url + "/sm_node/" + str(node_id)+ "/versions", headers=headers, json=node_data)
 
 
 def add_model(token, name, src):
@@ -284,8 +284,8 @@ def get_region(token, region_name):
     """
     Returns region currently supported is Melbourne
 
-    :param token: Assess token
-    :param region:region id
+    :param token: access token
+    :param region: region id
     :return: region id
     """
 
@@ -310,9 +310,18 @@ def get_regions(token):
     return requests.get(url + "/regions/", headers=headers)
 
 
-def execute_scenario(token, scenario):
+def execute_scenario(token, scenario, queue="default"):
+    """
+
+    :param token: access token
+    :param scenario: id of scenario to be executed
+    :param queue: optional parameter to define queue
+    :rtype: int
+    :rtype: str
+    :rtype: str
+    """
     headers = {"Authorization": "Bearer " + token}
-    return requests.post(url + "/scenario/" + str(scenario) + "/execute", headers=headers)
+    return requests.post(f'{url}/scenario/{scenario}/execute?queue={queue}', headers=headers)
 
 
 def get_geojsons(token, project):
