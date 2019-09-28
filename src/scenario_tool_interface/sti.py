@@ -95,6 +95,8 @@ def get_database_id(token, scenario_id):
     :return: data base id needed for query
     """
     r = get_simulations(token, scenario_id)
+    if r.status_code != 200:
+        raise Exception(f"Unable to obtain scenarios {r.status_code}")
 
     sims = r.json()
 
