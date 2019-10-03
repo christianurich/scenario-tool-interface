@@ -227,8 +227,8 @@ def test_assessment_models():
 def test_run_tutorial():
     run_tutorial()
 
-def test_run_tutorial_slow():
-    run_tutorial(queue="slow")
+# def test_run_tutorial_slow():
+#     run_tutorial(queue="slow")
 
 def test_download():
     # Login with your username and password
