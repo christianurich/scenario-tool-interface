@@ -757,19 +757,26 @@ def update_assessment_model(token, assessment_model_id, filename, model_id):
     raise Exception(f"Unable to update assessment model {r.status_code}")
 
 
-def get_project_databases(token, project_id, folder="."):
+def get_project_databases(token, project_id, folder=".", scenario_id = None):
     """
     Download project databases. Databases will be downloaded into folder/project_id.zip
+    For larger projects it is recommended to defined the scenario_id to be downloaded. Otherwise the download might fail
     :param token: access token
     :param project_id: project id
     :param folder: folder
+    :param scenario_id: scenario_id
     :type token: str
     :type project_id: int
     :type folder: str
+    :type scenario_id: int
     """
 
+
     headers = {"Authorization": "Bearer " + token}
-    r = requests.get(f"{url}/projects/{project_id}/data", headers=headers)
+    if scenario_id:
+        r = requests.get(f"{url}/projects/{project_id}/data?scenario={scenario_id}", headers=headers)
+    else:
+        r = requests.get(f"{url}/projects/{project_id}/data", headers=headers)
     if r.status_code == 200:
         open(f"{folder}/{project_id}.zip", 'wb').write(r.content)
         return
