@@ -778,7 +778,10 @@ def get_project_databases(token, project_id, folder=".", scenario_id = None):
     else:
         r = requests.get(f"{url}/projects/{project_id}/data", headers=headers)
     if r.status_code == 200:
-        open(f"{folder}/{project_id}.zip", 'wb').write(r.content)
+        if scenario_id:
+            open(f"{folder}/{project_id}-{scenario_id}.zip", 'wb').write(r.content)
+        else:
+            open(f"{folder}/{project_id}.zip", 'wb').write(r.content)
         return
     raise Exception(f"Something went wrong while downloading the folder {r.status_code} {r.json()}")
 
