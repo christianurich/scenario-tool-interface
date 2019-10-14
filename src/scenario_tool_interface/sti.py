@@ -633,7 +633,8 @@ def show_log(token, scenario_id):
 
 def get_node_id(token, name):
     """
-    Return node id to be used in simulation
+    Return node id to be used in simulation. If multiple nodes with the same id are identified the first node
+    belonging to the user is returned first
 
     :param token: access token
     :param name: node name
@@ -641,10 +642,25 @@ def get_node_id(token, name):
     :rtype int
     """
     nodes = get_nodes(token)
+    filtered_nodes = []
     for n in nodes:
         if n['name'] == name:
-            return n['id']
-    raise Exception(f"Node  {name} not found")
+            filtered_nodes.append(n)
+    if len(filtered_nodes) == 0:
+        raise Exception(f"Node  {name} not found")
+
+    if len(filtered_nodes) == 1:
+        return filtered_nodes[0]["id"]
+    # if multiple nodes return the one the user owns
+    for n in filtered_nodes:
+        if n["creator"] == get_my_status(token)["user_id"]:
+            return n["id"]
+
+    return filtered_nodes[0]["id"]
+
+
+
+
 
 
 def create_assessment_model(token, filename, model_id=None):
