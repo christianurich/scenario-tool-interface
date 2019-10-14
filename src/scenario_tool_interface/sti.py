@@ -785,3 +785,17 @@ def get_project_databases(token, project_id, folder=".", scenario_id = None):
         return
     raise Exception(f"Something went wrong while downloading the folder {r.status_code} {r.json()}")
 
+
+def get_my_status(token):
+    """
+    Get user status
+    :param token: access token
+    :return: dict with project status
+    """
+
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.get(f"{url}/user/status/", headers=headers)
+    if r.status_code == 200:
+        return r.json()
+
+    raise Exception(f"Something when downloading status {r.status_code} {r.json()}")
