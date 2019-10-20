@@ -652,7 +652,7 @@ def get_node_id(token, name, owner_id=None):
         if n['name'] == name:
             if owner_id and n['creator'] == owner_id:
                 filtered_nodes.append(n)
-            else:
+            elif not owner_id:
                 filtered_nodes.append(n)
     if len(filtered_nodes) == 0:
         raise Exception(f"Node  {name} not found")
