@@ -194,8 +194,9 @@ def create_scenario(token, project, parent, name="initialised model"):
     :type int
     :type str
     :return: scenario id
-    ":rtype: int
+    :rtype: int
     """
+
     data = {"project_id": project, "name": name}
     if parent is not None:
         data["parent"] = parent
@@ -631,13 +632,17 @@ def show_log(token, scenario_id):
     return database_id
 
 
-def get_node_id(token, name):
+def get_node_id(token, name, owner_id=None):
     """
     Return node id to be used in simulation. If multiple nodes with the same id are identified the first node
-    belonging to the user is returned first
+    belonging to the user is returned first. If owner_id is set only the node owned by the user is returned
 
     :param token: access token
     :param name: node name
+    :param owner_id: user_id
+    :type token: str
+    :type name: str
+    :type owner_id: int
     :return: node_id
     :rtype int
     """
@@ -645,7 +650,10 @@ def get_node_id(token, name):
     filtered_nodes = []
     for n in nodes:
         if n['name'] == name:
-            filtered_nodes.append(n)
+            if owner_id and n['creator'] == owner_id:
+                filtered_nodes.append(n)
+            else:
+                filtered_nodes.append(n)
     if len(filtered_nodes) == 0:
         raise Exception(f"Node  {name} not found")
 
