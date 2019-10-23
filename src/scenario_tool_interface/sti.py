@@ -105,8 +105,6 @@ def get_database_id(token, scenario_id):
         if sim["simulation_type"] == "PERFORMANCE_ASSESSMENT":
             return sim["id"]
 
-
-
 def create_project(token):
     """
     Creates a new project
@@ -143,7 +141,6 @@ def update_project(token, project, data):
 def get_assessment_models(token):
     headers = {"Authorization": "Bearer " + token}
     return requests.get(url + "/assessment_models", headers=headers)
-
 
 def get_assessment_model(token, model_name):
     """
@@ -484,6 +481,24 @@ def set_node_access_level(token, node_id, access_level):
     raise Exception(f"Could not update access level node {r.status_code}")
 
 
+def set_model_access_level(token, node_id, access_level):
+    """
+    Set the access level of the performance assessment model
+
+    :param token: access token
+    :param node_id: model id
+    :param access_level: access level (see enum)
+    :type token: str
+    :type node_id: int
+    :type access_level: int
+    """
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.post(f"{url}/assessment_models/{node_id}", headers=headers, json={"access_level": access_level})
+    if r.status_code == 200:
+        return
+    raise Exception(f"Could not update access level performance assessment model {r.status_code}")
+
+
 def deactivate_node(token, node_id):
     """
     Deactivate node
@@ -498,6 +513,24 @@ def deactivate_node(token, node_id):
     if r.status_code == 200:
         return
     raise Exception(f"Could not deactivate node {r.status_code}")
+
+
+def deactivate_assessment_model(token, node_id):
+    """
+    Deactivate assessment model
+
+    :param token: access token
+    :param node_id: node id
+    :type token: str
+    :type node_id: int
+    """
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.post(f"{url}/assessment_models/{node_id}", headers=headers, json={"active": False})
+    if r.status_code == 200:
+        return
+    raise Exception(f"Could not deactivate assessment model {r.status_code}")
+
+
 
 
 def get_baseline(token, project_id):
