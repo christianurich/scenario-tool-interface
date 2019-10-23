@@ -142,14 +142,17 @@ def get_assessment_models(token):
     headers = {"Authorization": "Bearer " + token}
     return requests.get(url + "/assessment_models", headers=headers)
 
-def get_assessment_model(token, model_name):
+
+def get_assessment_model(token, model_name, owner_id=None):
     """
     Returns assessment model id
 
     :param token: Access token
     :param model_name: Model Name. Currently supported are Land Surface Temperature and Target
+    :param owner_id: If owner_id is set only models owned by the user will be returned
     :type token: str
     :type model_name: str
+    :type owner_id: int
     :return: model_id
     :rtype: int
     """
@@ -160,17 +163,27 @@ def get_assessment_model(token, model_name):
         raise Exception(f"Could not get assessment model {r.status_code}")
 
     models = r.json()["assessment_models"]
-    model_id = None
 
+    filtered_nodes = []
     for model in models:
-        if model["name"] == model_name:
-            model_id = model["id"]
-            break
+        if model['name'] == model_name:
+            if owner_id and model['creator'] == owner_id:
+                filtered_nodes.append(model)
+            elif not owner_id:
+                filtered_nodes.append(model)
+    if len(filtered_nodes) == 0:
+        raise Exception(f"Performance assessment model {model_name} not found")
 
-    if model_id is None:
-        raise Exception(f"Could not find ' {model_name}")
+    if len(filtered_nodes) == 1:
+        return filtered_nodes[0]["id"]
 
-    return model_id
+    # if multiple performance assessment models have been found return the one the user owns
+    for n in filtered_nodes:
+        if n["creator"] == get_my_status(token)["user_id"]:
+            return n["id"]
+
+    return filtered_nodes[0]["id"]
+
 
 def set_project_assessment_models(token, project, models):
     headers = {"Authorization": "Bearer " + token}
