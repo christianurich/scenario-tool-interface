@@ -494,6 +494,37 @@ def set_node_access_level(token, node_id, access_level):
     raise Exception(f"Could not update access level node {r.status_code}")
 
 
+def set_node_properties(token, node_id, properties):
+    """
+    Set the access level of the parent node
+
+    :param token: access token
+    :param node_id: node id
+    :param properties: dict
+    :type token: str
+    :type node_id: int
+    :type properties: dict
+
+      .. code-block::
+
+        {
+           "active": true or false,
+           "access_level": see enum,
+           "tags": '["urban from", ...]' // Array as string with tags
+           "description": "node description"
+           "version_tag": "0.0.1" // Version Tag
+        }
+
+    returns:
+
+    """
+    headers = {"Authorization": "Bearer " + token}
+    r = requests.post(f"{url}/sm_node/{node_id}", headers=headers, json=properties)
+    if r.status_code == 200:
+        return
+    raise Exception(f"Could not update node properties node {r.status_code}")
+
+
 def set_model_access_level(token, node_id, access_level):
     """
     Set the access level of the performance assessment model
