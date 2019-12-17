@@ -128,7 +128,7 @@ def run_tutorial(queue="default"):
             break
         time.sleep(1)
     print(r['data'])
-    assert r['data'][0]['tf'] == 0.03822364549421932
+    assert r['data'][0]['tf'] == 0.0696807189475445
 
 
     # Should through an exception because access
