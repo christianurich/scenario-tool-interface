@@ -698,7 +698,7 @@ class ScenarioToolInterface:
         if model_id is not None:
             node_data["model_id"] = model_id
 
-        r = self._posts(self.api_url + "/assessment_models", node_data)
+        r = self._post(self.api_url + "/assessment_models", node_data)
 
         if r.status_code == 200:
             result = r.json()
