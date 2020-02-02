@@ -256,6 +256,76 @@ class ScenarioToolInterface:
     def get_scenario_workflow_nodes(self):
         return self._get(self.api_url + "/sm_node/")
 
+    def create_dash_tile_template(self, json):
+        """
+        Define tile template (see doc)
+        :param json:
+        :return: dash_tile_template_id
+        :rtype: int
+        """
+
+        r = self._post(self.api_url + "/dash_tile_template/", {"json": json})
+
+        if r.status_code == 200:
+            return r.json()["id"]
+
+        raise Exception(f"Unable to create template {r.status_code}")
+
+    def create_query_template(self, json, access_level):
+        """
+        Define tile template (see doc)
+        :param json:
+        :param access_level
+        :type geojson: str
+        :type access_level: int
+        :return: query_template_id
+        :rtype: int
+        """
+
+        r = self._post(self.api_url + "/query_prototypes/", {"json": json, "access_level": access_level})
+
+        if r.status_code == 200:
+            return r.json()["id"]
+
+        raise Exception(f"Unable to create template {r.status_code}")
+
+    def link_dash_tile_assessment_model(self, dash_tile_template_id, assessment_model_id):
+        """
+        Link dash tile with assessment model
+
+        :param dash_tile_template_id:
+        :param assessment_model_id:
+        :type dash_tile_template_id: int
+        :type assessment_model_id: int
+        :return: None
+        """
+
+        r = self._post(self.api_url + "/dash_tile_template_assessment_model/",
+                       {"dash_tile_template_id": dash_tile_template_id,
+                        "assessment_model_id": assessment_model_id})
+        if r.status_code == 200:
+            return
+
+        raise Exception(f"Unable to link template {r.status_code}")
+
+    def link_query_prototype_assessment_model(self, query_prototype_id, assessment_model_id):
+        """
+        Link query prototype with assessment model
+        :param query_prototype_id:
+        :param assessment_model_id:
+        :type query_prototype_id: int
+        :type assessment_model_id: int
+        :return: None
+        """
+
+        r = self._post(self.api_url + "/query_template_assessment_model/",
+                       {"query_prototype_id": query_prototype_id,
+                        "assessment_model_id": assessment_model_id})
+        if r.status_code == 200:
+            return
+
+        raise Exception(f"Unable to link template {r.status_code}")
+
     def upload_geojson(self, geojson, project_id, name="casestudyarea"):
         """
         Upload a geojson file and return id
@@ -704,6 +774,8 @@ class ScenarioToolInterface:
             result = r.json()
             return result["assessment_model_id"]
         raise Exception(f"Unable to create assessment model {r.status_code}")
+
+
 
     def update_assessment_model(self, assessment_model_id, filename, model_id):
         """
