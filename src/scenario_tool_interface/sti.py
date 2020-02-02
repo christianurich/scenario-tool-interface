@@ -326,6 +326,24 @@ class ScenarioToolInterface:
 
         raise Exception(f"Unable to link template {r.status_code}")
 
+    def link_dash_tile_query_prototype(self, dash_tile_template_id , query_prototype_id):
+        """
+        Link query prototype with assessment model
+        :param dash_tile_template_id:
+        :param query_prototype_id:
+        :type dash_tile_template_id: int
+        :type query_prototype_id: int
+        :return: None
+        """
+
+        r = self._post(self.api_url + "/dash_tile_template_query_prototype/",
+                       {"dash_tile_template_id": dash_tile_template_id,
+                        "query_prototype_id": query_prototype_id})
+        if r.status_code == 200:
+            return
+
+        raise Exception(f"Unable to link template {r.status_code}")
+    
     def upload_geojson(self, geojson, project_id, name="casestudyarea"):
         """
         Upload a geojson file and return id
