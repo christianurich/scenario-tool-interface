@@ -271,6 +271,25 @@ class ScenarioToolInterface:
 
         raise Exception(f"Unable to create template {r.status_code}")
 
+    def edit_dash_tile_template(self, template_id, json=None, active=True):
+        """
+        Define tile template (see doc)
+        :param json:
+        :return: dash_tile_template_id
+        :rtype: int
+        """
+        data = {}
+        if json:
+            data["json"] = json
+        data["active"] = active
+
+        r = self._post(self.api_url + f"/dash_tile_template/{template_id}", data)
+
+        if r.status_code == 200:
+            return r.json()["id"]
+
+        raise Exception(f"Unable to create template {r.status_code}")
+
     def create_query_template(self, json, access_level):
         """
         Define tile template (see doc)
@@ -343,7 +362,7 @@ class ScenarioToolInterface:
             return
 
         raise Exception(f"Unable to link template {r.status_code}")
-    
+
     def upload_geojson(self, geojson, project_id, name="casestudyarea"):
         """
         Upload a geojson file and return id
