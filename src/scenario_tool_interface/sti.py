@@ -283,7 +283,7 @@ class ScenarioToolInterface:
             data["json"] = json
         data["active"] = active
 
-        r = self._post(self.api_url + f"/dash_tile_template/{template_id}", data)
+        r = self._post(self.api_url + "/dash_tile_template/" + str(template_id), data)
 
         if r.status_code == 200:
             return r.json()["id"]
