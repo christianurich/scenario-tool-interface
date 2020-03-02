@@ -6,6 +6,9 @@ from pkg_resources import get_distribution, DistributionNotFound
 
 from scenario_tool_interface.sti import ScenarioToolInterface
 
+from scenario_tool_interface.json2dynamind import Json2DynaMindXML
+from scenario_tool_interface.dynamind2json import DynaMindXML2Json
+
 try:
     # Change here if project is renamed and does not equal the package name
     dist_name = 'scenario-tool-interface'
