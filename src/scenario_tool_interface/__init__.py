@@ -4,7 +4,7 @@ This module provides access to the Scenario-Tool's REST API to create and run sc
 """
 from pkg_resources import get_distribution, DistributionNotFound
 
-from scenario_tool_interface.sti import ScenarioToolInterface
+from scenario_tool_interface.sti import ScenarioToolInterface, AccessLevel
 
 from scenario_tool_interface.json2dynamind import Json2DynaMindXML
 from scenario_tool_interface.dynamind2json import DynaMindXML2Json
