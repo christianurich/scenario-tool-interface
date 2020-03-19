@@ -708,6 +708,22 @@ class ScenarioToolInterface:
         scenarios = r.json()["scenarios"]
         return scenarios
 
+    def download_geojson(self, scenario_id, layer_name):
+        """
+
+        :param scenario_id: scenario id
+        :param layern_name:
+        :type int
+        :type string
+        :return: geojson string
+        """
+
+        r = self._get(self.api_url + "/scenario/" + str(scenario_id) + "/layer/" + str(layer_name))
+        if not r.status_code == 200:
+            raise Exception(f"Could not download result {r.status_code}")
+
+        return r.text
+
     def show_log(self, scenario_id):
         """
         Print scenario log file

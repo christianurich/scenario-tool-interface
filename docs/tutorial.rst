@@ -20,9 +20,10 @@ Getting your login token
 
 .. code-block::
 
-    import scenario_tool_interface.sti as sti
+    from scenario_tool_interface import ScenarioToolInterface
+    sti = ScenarioToolInterface()
     # Login with your username and password
-    token = sti.login("username", "password")
+    sti.login("username", "password")
 
 
 Setup project and run baseline
@@ -37,20 +38,20 @@ Further for each model the performance assessment model may be defined.
 
 
     # Create a new project
-    project_id = sti.create_project(token)
+    project_id = sti.create_project()
 
     # Obtain region code
-    region_id = sti.get_region(token, "melbourne")
+    region_id = sti.get_region("melbourne")
 
     # Load geoson file
     with open("../resources/test.geojson", 'r') as file:
              geojson_file = json.loads(file.read())
 
     # Upload boundary
-    geojson_id = sti.upload_geojson(token, geojson_file, project_id)
+    geojson_id = sti.upload_geojson(geojson_file, project_id)
 
     # Set project parameters
-    sti.update_project(token, project_id, {
+    sti.update_project(project_id, {
         "name": "my project",
         "active": True,
         'region_id': region_id,
@@ -58,20 +59,20 @@ Further for each model the performance assessment model may be defined.
     })
 
     # Add assessment models
-    lst_model = sti.get_assessment_model(token, "Land Surface Temperature")
+    lst_model = sti.get_assessment_model("Land Surface Temperature")
 
     # Set assessment models
-    sti.set_project_assessment_models(token, project_id, [{"assessment_model_id": lst_model}])
+    sti.set_project_assessment_models(project_id, [{"assessment_model_id": lst_model}])
 
 
     # Create and run baseline
     baseline_id = sti.create_scenario(token, project_id, None)
-    sti.execute_scenario(token, baseline_id)
+    sti.execute_scenario(baseline_id)
 
     # Scenarios are executed asynchronous.
     while True:
          # A status code smaller than 7 means the simulation is still executed.
-         r = sti.check_status(token, baseline_id)
+         r = sti.check_status(baseline_id)
          status = r["status"]
          if status > 6:
             break
@@ -89,7 +90,7 @@ or adding trees. To show a list of a available nodes use:
 .. code-block::
 
     # Print a list of available nodes
-    sti.show_nodes(token)
+    sti.show_nodes()
 
     # Nodes are defined as below
     residential_node = {
@@ -109,25 +110,24 @@ or adding trees. To show a list of a available nodes use:
     nodes.append(residential_node)
 
     # Scenarios need a parent. In this case we use the base line scenario created before
-    baseline_scenario_id = sti.get_baseline(token, project_id)
+    baseline_scenario_id = sti.get_baseline(project_id)
 
     # Crate a new scenario
-    scenario_id = sti.create_scenario(token, project_id, baseline_scenario_id, "my new scenario")
+    scenario_id = sti.create_scenario(project_id, baseline_scenario_id, "my new scenario")
 
     # Set workflow
-    sti.set_scenario_workflow(token, scenario_id, nodes)
+    sti.set_scenario_workflow(scenario_id, nodes)
 
     # Execute scenario
-    sti.execute_scenario(token, scenario_id)
+    sti.execute_scenario(scenario_id)
 
     # Scenarios are executed asynchronous
     while True:
         # A status code smaller than 7 means the simulation is still executed.
-        r = sti.check_status(token, scenario_id)
+        r = sti.check_status(scenario_id)
         status = r["status"]
         if status > 6:
             break
-
         time.sleep(1)
 
 
@@ -142,15 +142,14 @@ This section will show how the results of the before created base line and scena
    # Before running an analysis check if the scenarios have been executed
    # The scenario of interest should start return a 7 as simulation status which indicate the performance
    # assessment model has been successfully executed
-   sti.show_scenarios(token, project_id)
+   sti.show_scenarios(project_id)
 
    # The results can be obtained buy running SQL queries on the result database
    # Queries are executed asynchronous. We execute wait therefore until the return status has
    # changed to loaded
 
     while True:
-        r = sti.run_query(token,
-                          scenario_id,
+        r = sti.run_query(scenario_id,
                           "SELECT avg(tree_cover_fraction) as tf from micro_climate_grid")
 
         if r['status'] != 'loaded':
