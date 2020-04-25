@@ -191,7 +191,14 @@ class ScenarioToolInterface:
         return filtered_nodes[0]["id"]
 
     def set_project_assessment_models(self, project, models):
-        return self._put(self.api_url + "/projects/" + str(project) + "/models", models)
+        r = self._put(self.api_url + "/projects/" + str(project) + "/models", models)
+        if not r.status_code == 200:
+            raise Exception(f"Unable to set assessment model {r.status_code}, {r.text}")
+
+    def set_project_data_model(self, project, model):
+        r = self._post(self.api_url + "/projects/" + str(project) + "/data_model", model)
+        if not r.status_code == 200:
+            raise Exception(f"Unable to set project data model {r.status_code}, {r.text}")
 
     def create_scenario(self, project, parent, name="initialised model"):
         """
@@ -420,7 +427,9 @@ class ScenarioToolInterface:
         :rtype: int
         :rtype: str
         """
-        return self._post(f'{self.api_url}/scenario/{scenario}/execute?queue={queue}')
+        r = self._post(f'{self.api_url}/scenario/{scenario}/execute?queue={queue}')
+        if r.status_code != 200:
+            raise Exception(f"Unable to execute scenario {r.status_code}, {r.text}")
 
     def get_geojsons(self, project: int):
         return self._get(self.api_url + "/geojson/" + str(project))
