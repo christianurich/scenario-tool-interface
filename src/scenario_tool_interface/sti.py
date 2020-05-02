@@ -116,7 +116,7 @@ class ScenarioToolInterface:
         """
         r = self.get_simulations(scenario_id)
         if r.status_code != 200:
-            raise Exception(f"Unable to obtain scenarios {r.status_code}")
+            raise Exception(f"Unable to obtain scenarios {r.status_code}, {r.json()}")
 
         sims = r.json()
 
@@ -147,10 +147,19 @@ class ScenarioToolInterface:
         return self._get(self.api_url + "/projects/")
 
     def update_project(self, project, data):
-        return self._put(self.api_url + "/projects/" + str(project), data)
+        r = self._put(self.api_url + "/projects/" + str(project), data)
+
+        if r.status_code == 200:
+            return
+
+        raise Exception(f"Updating project failed {r.status_code}, {r.json()}")
 
     def get_assessment_models(self):
-        return self._get(self.api_url + "/assessment_models/")
+        r = self._get(self.api_url + "/assessment_models/")
+
+        if r.status_code == 200:
+            return r.json()
+        raise Exception(f"Failed to get performance assessment model {r.status_code}, {r.json()}")
 
     def get_assessment_model(self, model_name, owner_id=None):
         """
@@ -166,7 +175,7 @@ class ScenarioToolInterface:
         r = self.get_assessment_models()
 
         if not r.status_code == 200:
-            raise Exception(f"Could not get assessment model {r.status_code}")
+            raise Exception(f"Could not get assessment model {r.status_code}, {r.json()}")
 
         models = r.json()["assessment_models"]
 
@@ -193,12 +202,12 @@ class ScenarioToolInterface:
     def set_project_assessment_models(self, project, models):
         r = self._put(self.api_url + "/projects/" + str(project) + "/models", models)
         if not r.status_code == 200:
-            raise Exception(f"Unable to set assessment model {r.status_code}, {r.text}")
+            raise Exception(f"Unable to set assessment model {r.status_code}, {r.json()}")
 
     def set_project_data_model(self, project, model):
         r = self._post(self.api_url + "/projects/" + str(project) + "/data_model", model)
         if not r.status_code == 200:
-            raise Exception(f"Unable to set project data model {r.status_code}, {r.text}")
+            raise Exception(f"Unable to set project data model {r.status_code}, {r.json()}")
 
     def create_scenario(self, project, parent, name="initialised model"):
         """
@@ -224,7 +233,7 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             return r.json()["id"]
 
-        raise Exception(f"Unable to create scenario {r.status_code}")
+        raise Exception(f"Unable to create scenario {r.status_code}, {r.json()}")
 
     def set_scenario_workflow(self, scenario_id, node_data):
         """
@@ -391,7 +400,7 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             return r.json()["id"]
 
-        raise Exception(f"Unable to upload file {r.status_code}")
+        raise Exception(f"Unable to upload file {r.status_code}, {r.json()}")
 
     def get_region(self, region_name: str) -> int:
         """
@@ -403,7 +412,7 @@ class ScenarioToolInterface:
 
         r = self._get(self.api_url + "/regions/")
         if not r.status_code == 200:
-            raise Exception(f"Unable to get region {r.status_code}")
+            raise Exception(f"Unable to get region {r.status_code}, {r.json()}")
         regions = r.json()
         melbourne_region_id = None
         for region in regions:
@@ -429,7 +438,7 @@ class ScenarioToolInterface:
         """
         r = self._post(f'{self.api_url}/scenario/{scenario}/execute?queue={queue}')
         if r.status_code != 200:
-            raise Exception(f"Unable to execute scenario {r.status_code}, {r.text}")
+            raise Exception(f"Unable to execute scenario {r.status_code}, {r.json()}")
 
     def get_geojsons(self, project: int):
         return self._get(self.api_url + "/geojson/" + str(project))
@@ -464,7 +473,7 @@ class ScenarioToolInterface:
         """
         r = self._get(self.api_url + "/scenario/" + str(scenario) + "/status")
         if r.status_code != 200:
-            raise Exception(f"Unable to get status {r.status_code}")
+            raise Exception(f"Unable to get status {r.status_code}, {r.json()}")
         return r.json()
 
     def get_scenario(self, scenario: int):
@@ -519,7 +528,7 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             result = r.json()
             return result["node_id"]
-        raise Exception(f"Unable to add node {r.status_code}")
+        raise Exception(f"Unable to add node {r.status_code}, {r.json()}")
 
     def update_node(self, node_id, filename, model_id=None, access_level=AccessLevel.SUPERADMIN.value):
         """
@@ -547,7 +556,7 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             result = r.json()
             return result["node_version_id"]
-        raise Exception(f"Unable to update node {r.status_code}")
+        raise Exception(f"Unable to update node {r.status_code}, {r.json()}")
 
     def set_node_access_level(self, node_id, access_level):
         """
@@ -561,7 +570,7 @@ class ScenarioToolInterface:
         r = self._post(f"{self.api_url}/sm_node/{node_id}", {"access_level": access_level})
         if r.status_code == 200:
             return
-        raise Exception(f"Could not update access level node {r.status_code}")
+        raise Exception(f"Could not update access level node {r.status_code}, {r.json()}")
 
     def set_node_properties(self, node_id, properties):
         """
@@ -588,7 +597,7 @@ class ScenarioToolInterface:
         r = self._post(f"{self.api_url}/sm_node/{node_id}", properties)
         if r.status_code == 200:
             return
-        raise Exception(f"Could not update node properties node {r.status_code}")
+        raise Exception(f"Could not update node properties node {r.status_code}, {r.json()}")
 
     def set_model_access_level(self, node_id, access_level):
         """
@@ -614,7 +623,7 @@ class ScenarioToolInterface:
         r = self._post(f"{self.api_url}/sm_node/{node_id}", {"active": False})
         if r.status_code == 200:
             return
-        raise Exception(f"Could not deactivate node {r.status_code}")
+        raise Exception(f"Could not deactivate node {r.status_code}, {r.json()}")
 
     def deactivate_assessment_model(self, node_id):
         """
@@ -626,7 +635,7 @@ class ScenarioToolInterface:
         r = self._post(f"{self.api_url}/assessment_models/{node_id}", {"active": False})
         if r.status_code == 200:
             return
-        raise Exception(f"Could not deactivate assessment model {r.status_code}")
+        raise Exception(f"Could not deactivate assessment model {r.status_code}, {r.json()}")
 
     def get_baseline(self, project_id):
         """
@@ -695,7 +704,7 @@ class ScenarioToolInterface:
         """
         r = self.get_project(project_id)
         if not r.status_code == 200:
-            raise Exception(f"Could not get scenario workflow nodes {r.status_code}")
+            raise Exception(f"Could not get scenario workflow nodes {r.status_code}, {r.json()}")
 
         scenarios = r.json()["scenarios"]
         for s in scenarios:
@@ -712,7 +721,7 @@ class ScenarioToolInterface:
         """
         r = self.get_project(project_id)
         if not r.status_code == 200:
-            raise Exception(f"Could not get scenario workflow nodes {r.status_code}")
+            raise Exception(f"Could not get scenario workflow nodes {r.status_code}, {r.json()}")
 
         scenarios = r.json()["scenarios"]
         return scenarios
@@ -729,7 +738,7 @@ class ScenarioToolInterface:
 
         r = self._get(self.api_url + "/scenario/" + str(scenario_id) + "/layer/" + str(layer_name))
         if not r.status_code == 200:
-            raise Exception(f"Could not download result {r.status_code}")
+            raise Exception(f"Could not download result {r.status_code}, {r.json()}")
 
         return r.text
 
@@ -743,7 +752,7 @@ class ScenarioToolInterface:
         r = self.get_simulations( scenario_id)
 
         if not r.status_code == 200:
-            raise Exception(f"Could not get scenario log {r.status_code}")
+            raise Exception(f"Could not get scenario log {r.status_code}, {r.json()}")
 
         sims = r.json()
 
@@ -835,7 +844,7 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             result = r.json()
             return result["assessment_model_id"]
-        raise Exception(f"Unable to create assessment model {r.status_code}")
+        raise Exception(f"Unable to create assessment model {r.status_code}, {r.json()}")
 
 
 
@@ -888,7 +897,7 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             result = r.json()
             return result["assessment_model_version_id"]
-        raise Exception(f"Unable to update assessment model {r.status_code}")
+        raise Exception(f"Unable to update assessment model {r.status_code}, {r.json()}")
 
     def get_project_databases(self, project_id, folder=".", scenario_id=None):
         """
@@ -925,3 +934,39 @@ class ScenarioToolInterface:
             return r.json()
 
         raise Exception(f"Something when downloading status {r.status_code} {r.json()}")
+
+    def get_default_parameter_dict(self, node_id: int) -> dict:
+        """
+        Returns default parameter dict for a node
+        :param node_id:
+        :type node_id: int
+        :return: Parameter dict
+        :rtype dict
+        """
+        nodes = self.get_nodes()
+        parameter_dict = {}
+        for n in nodes:
+            if node_id != n['id']:
+                continue
+            versions = [(idx, v['id']) for idx, v in enumerate(n['versions'])]
+            latest_version = max(versions, key=lambda t: t[1])
+            version = n['versions'][latest_version[0]]
+            for m in version["models"]:
+                for p in m['parameter_description']:
+                    if 'fields' in p:
+                        for f in p['fields']:
+                            parameter_dict[f['parameter']] = f['default']
+                    if 'parameter' in p:
+                        parameter_dict[p['parameter']] = p['default']
+            return parameter_dict
+        raise Exception(f"Node not found")
+
+    def show_assessment_models(self) -> None:
+        """
+        List available assessment models
+        :return: Nonw
+        """
+        models = self.get_assessment_models().json()
+        for m in models['assessment_models']:
+            print(m['name'])
+
