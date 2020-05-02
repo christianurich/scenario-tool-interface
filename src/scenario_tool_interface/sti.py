@@ -174,11 +174,7 @@ class ScenarioToolInterface:
         """
         r = self.get_assessment_models()
 
-        if not r.status_code == 200:
-            raise Exception(f"Could not get assessment model {r.status_code}, {r.json()}")
-
-        models = r.json()["assessment_models"]
-
+        models = r["assessment_models"]
         filtered_nodes = []
         for model in models:
             if model['name'] == model_name:
