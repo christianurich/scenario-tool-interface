@@ -966,7 +966,7 @@ class ScenarioToolInterface:
         List available assessment models
         :return: Nonw
         """
-        models = self.get_assessment_models().json()
+        models = self.get_assessment_models()
         for m in models['assessment_models']:
             print(m['name'])
 
