@@ -17,8 +17,8 @@ class AccessLevel(enum.Enum):
 
 class ScenarioToolInterface:
 
-    def __init__(self, api_url="https://staging-api.dance4water.org/api",
-                 results_url="https://staging-sql.dance4water.org/resultsdb/"):
+    def __init__(self, api_url="https://stable-api.dance4water.org/api",
+                 results_url="https://stable-sql.dance4water.org/resultsdb/"):
         self.api_url = api_url
         self.results_url = results_url
 
@@ -754,7 +754,8 @@ class ScenarioToolInterface:
 
         for s in sims["simulations"]:
             database_id = json.loads(s)["id"]
-        for s in sims["simulation_intances"]:
+
+        for s in sims["simulation_instances"]:
             print(json.loads(s)["id"], json.loads(s)["progress"], json.loads(s)["heartbeat"], json.loads(s)["log"])
 
         return database_id
