@@ -205,7 +205,7 @@ class ScenarioToolInterface:
         if not r.status_code == 200:
             raise Exception(f"Unable to set project data model {r.status_code}, {r.json()}")
 
-    def create_scenario(self, project, parent, name="initialised model"):
+    def create_scenario(self, project, parent, name="Baseline"):
         """
         Creates a new scenario. The provides the shell for the new scenarios. Scenario are derived from the base line
         or any other scenario in the project. To modify the environment workflow may be defined and executed.
@@ -265,8 +265,10 @@ class ScenarioToolInterface:
 
         raise Exception(f"Something went wrong when adding the nodes {r.status_code} {r.json()}")
 
-    def get_scenario_workflow_nodes(self):
-        return self._get(self.api_url + "/sm_node/")
+    def get_scenario_workflow_nodes(self, scenario_id=None):
+        if scenario_id is None:
+            return self._get(self.api_url + "/sm_node/")
+        return self._get(self.api_url + "/scenario/" + str(scenario_id) + "/nodes")
 
     def create_dash_tile_template(self, json):
         """
