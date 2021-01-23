@@ -205,6 +205,42 @@ class ScenarioToolInterface:
         if not r.status_code == 200:
             raise Exception(f"Unable to set project data model {r.status_code}, {r.json()}")
 
+
+    def share_project(self, project, username):
+        """
+        Share a project
+
+        :param project: project id
+        :param username: share user name
+        """
+
+        data = {"username": username}
+
+        r = self._post(self.api_url + "/projects/" + str(project) + "/share", data)
+
+        if r.status_code == 200:
+            return
+
+        raise Exception(f"Unable to share project {r.status_code}, {r.json()}")
+
+    def archive_project(self, project):
+        """
+        Share a project
+
+        :param project: project id
+        :param username: share user name
+        """
+
+        data = {}
+
+        r = self._post(self.api_url + "/projects/" + str(project) + "/archive", data)
+
+        if r.status_code == 200:
+            return
+
+        raise Exception(f"Unable to archive project {r.status_code}")
+
+
     def create_scenario(self, project, parent, name="Baseline"):
         """
         Creates a new scenario. The provides the shell for the new scenarios. Scenario are derived from the base line
@@ -399,6 +435,57 @@ class ScenarioToolInterface:
             return r.json()["id"]
 
         raise Exception(f"Unable to upload file {r.status_code}, {r.json()}")
+
+    def create_datasource(self,  project_id, name, source_type="file", upload_id=None):
+        """
+        Upload a geojson file and return id
+
+        :param geojson: geojson file
+        :param project_id: project the node will be assigned to
+        :param name: added option to set name of geojson file default is set to casestudyarea
+        :type geojson: str
+        :type name: str
+        :type project_id: int
+        :return: geojson id
+        :rtype: int
+        """
+
+        r = self._post(self.api_url + "/data_source/",
+                       {"project_id": project_id,
+                        "source_type": source_type,
+                        "upload_id": upload_id,
+                        "name": name})
+
+        if r.status_code == 200:
+            return r.json()["id"]
+
+        raise Exception(f"Unable to create datasource {r.status_code}, {r.json()}")
+
+    def upload_file(self, project_id, file):
+        """
+        Upload a  file and return id
+
+        :param file: path to file
+        :param project_id: project the file will be assigned to
+        :type file: str
+        :type name: str
+        :type project_id: int
+        :rtype: int
+        """
+
+        if not self.authenticated or self.token is None:
+            raise Exception(f"User not authenticated, {url}")
+
+        headers = {"Authorization": "Bearer " + self.token}
+
+        files = {'file': open(file, 'rb')}
+        r = requests.post(self.api_url + f"/upload/{project_id}", headers=headers, files=files)
+
+        if r.status_code == 200:
+            return r.json()["id"]
+
+        raise Exception(f"Unable to upload file {r.status_code}, {r.json()}")
+
 
     def get_region(self, region_name: str) -> int:
         """
