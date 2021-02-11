@@ -309,6 +309,7 @@ class ScenarioToolInterface:
     def create_dash_tile_template(self, json):
         """
         Define tile template (see doc)
+
         :param json:
         :return: dash_tile_template_id
         :rtype: int
@@ -324,6 +325,7 @@ class ScenarioToolInterface:
     def edit_dash_tile_template(self, template_id, json=None, active=True):
         """
         Define tile template (see doc)
+
         :param json:
         :return: dash_tile_template_id
         :rtype: int
@@ -343,6 +345,7 @@ class ScenarioToolInterface:
     def create_query_template(self, json, access_level):
         """
         Define tile template (see doc)
+
         :param json:
         :param access_level
         :type geojson: str
@@ -380,6 +383,7 @@ class ScenarioToolInterface:
     def link_query_prototype_assessment_model(self, query_prototype_id, assessment_model_id):
         """
         Link query prototype with assessment model
+
         :param query_prototype_id:
         :param assessment_model_id:
         :type query_prototype_id: int
@@ -398,6 +402,7 @@ class ScenarioToolInterface:
     def link_dash_tile_query_prototype(self, dash_tile_template_id , query_prototype_id):
         """
         Link query prototype with assessment model
+
         :param dash_tile_template_id:
         :param query_prototype_id:
         :type dash_tile_template_id: int
@@ -813,6 +818,7 @@ class ScenarioToolInterface:
 
     def download_geojson(self, scenario_id, layer_name):
         """
+        Download layer as geojson file
 
         :param scenario_id: scenario id
         :param layern_name:
@@ -989,6 +995,7 @@ class ScenarioToolInterface:
         """
         Download project databases. Databases will be downloaded into folder/project_id.zip
         For larger projects it is recommended to defined the scenario_id to be downloaded. Otherwise the download might fail
+
         :param project_id: project id
         :param folder: folder
         :param scenario_id: scenario_id
@@ -1012,6 +1019,7 @@ class ScenarioToolInterface:
     def get_my_status(self):
         """
         Get user status
+        
         :return: dict with project status
         """
 
@@ -1024,6 +1032,7 @@ class ScenarioToolInterface:
     def get_default_parameter_dict(self, node_id: int) -> dict:
         """
         Returns default parameter dict for a node
+
         :param node_id:
         :type node_id: int
         :return: Parameter dict
@@ -1050,7 +1059,8 @@ class ScenarioToolInterface:
     def show_assessment_models(self) -> None:
         """
         List available assessment models
-        :return: Nonw
+
+        :return: None
         """
         models = self.get_assessment_models()
         for m in models['assessment_models']:
