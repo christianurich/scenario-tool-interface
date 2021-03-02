@@ -111,6 +111,7 @@ class DynaMindXML2Json:
             return
 
         for l in node["link_to"]:
+            down = False
             if self._nodes[l]["group_uuid"] != group_uuid:
                 continue
             if self._is_group(l):

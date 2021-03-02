@@ -1019,7 +1019,7 @@ class ScenarioToolInterface:
     def get_my_status(self):
         """
         Get user status
-        
+
         :return: dict with project status
         """
 
