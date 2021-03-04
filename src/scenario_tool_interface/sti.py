@@ -128,7 +128,7 @@ class ScenarioToolInterface:
         for s in sims["simulations"]:
             sim = json.loads(s)
             if sim["simulation_type"] == "PERFORMANCE_ASSESSMENT":
-                self._cache = sim["id"]
+                self._cache[cache_key] = sim["id"]
                 return self._cache[cache_key]
 
 
