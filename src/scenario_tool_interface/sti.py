@@ -24,6 +24,7 @@ class ScenarioToolInterface:
 
         self.authenticated = False
         self.token = None
+        self._cache = {}
 
     def login(self, username: str, password: str):
         """
@@ -114,6 +115,10 @@ class ScenarioToolInterface:
         :param scenario_1_id: scenario id
         :return: data base id needed for query
         """
+        cache_key = f"get_database_id{scenario_id}"
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+
         r = self.get_simulations(scenario_id)
         if r.status_code != 200:
             raise Exception(f"Unable to obtain scenarios {r.status_code}, {r.json()}")
@@ -123,7 +128,9 @@ class ScenarioToolInterface:
         for s in sims["simulations"]:
             sim = json.loads(s)
             if sim["simulation_type"] == "PERFORMANCE_ASSESSMENT":
-                return sim["id"]
+                self._cache = sim["id"]
+                return self._cache[cache_key]
+
 
     def create_project(self):
         """
