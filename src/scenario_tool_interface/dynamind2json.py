@@ -38,8 +38,8 @@ class DynaMindXML2Json:
             filter = n.find('Filter')
             if filter:
                 filter_view = [e.text.strip() for e in filter.findall("filter_view")]
-                attribtue_filter = [e.text.strip() for e in filter.findall("attribtue_filter")]
-                spatial_filter = [e.text.strip() for e in filter.findall("spatial_filter")]
+                attribtue_filter = [e.text.strip() if e.text else "" for e in filter.findall("attribtue_filter")]
+                spatial_filter = [e.text.strip() if e.text else "" for e in filter.findall("spatial_filter")]
                 node_filter = {}
                 node_filter["filter_view"] = filter_view
                 node_filter["attribute_filter"] = attribtue_filter
@@ -58,7 +58,7 @@ class DynaMindXML2Json:
         parameters = {}
         ps = node.findall('parameter')
         for p in ps:
-            parameters[p.get("name")] = p.text.strip()
+            parameters[p.get("name")] = p.text.strip() if p.text else ""
         return parameters
 
     def _start_in_group(self, uuid):
