@@ -43,7 +43,7 @@ class Json2DynaMindXML:
 
         if "filter" in n_dict:
 
-            filter_view = "".join(n_dict["filter"]["filter_view"])
+            filter_view = "".join(n_dict["filter"]["view_name"])
             attribute_filter = "".join(n_dict["filter"]["attribute_filter"])
             spatial_filter = "".join(n_dict["filter"]["spatial_filter"])
 

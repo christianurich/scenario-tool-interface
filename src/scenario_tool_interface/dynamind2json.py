@@ -37,11 +37,11 @@ class DynaMindXML2Json:
 
             filter = n.find('Filter')
             if filter:
-                filter_view = [e.text.strip() for e in filter.findall("filter_view")]
+                filter_view = [e.text.strip() for e in filter.findall("view_name")]
                 attribtue_filter = [e.text.strip() if e.text else "" for e in filter.findall("attribtue_filter")]
                 spatial_filter = [e.text.strip() if e.text else "" for e in filter.findall("spatial_filter")]
                 node_filter = {}
-                node_filter["filter_view"] = filter_view
+                node_filter["view_name"] = filter_view
                 node_filter["attribute_filter"] = attribtue_filter
                 node_filter["spatial_filter"] = spatial_filter
                 node["filter"] = node_filter
