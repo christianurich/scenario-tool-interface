@@ -11,8 +11,8 @@ Description
 ===========
 
 The Scenario Tool Interface provides an easy to use Python interface to the Scenario-Tool's REST api.
-It provides power users with the ability to create create project, create complex workflows and run sensitivity
-and run sensitivity and uncertainty analysis. Combined with powerful python notebook's and data analysis tools
+It provides power users with the ability to create project, create complex workflows and run sensitivity
+and uncertainty analysis. Combined with powerful python notebook's and data analysis tools
 such as pandas if provides a powerful tool to gain insights for complex integrated urban water management strategies.
 
 
