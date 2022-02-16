@@ -1,21 +1,25 @@
+from re import A
 import pytest
 from scenario_tool_interface import ScenarioToolInterface
 import json
 import time
 import os
-# from .credentials import
 
 __author__ = "Christian Urich"
 __copyright__ = "Christian Urich"
 __license__ = "mit"
 
 
-USERNAME = os.environ['USERNAME']
-PASSWORD = os.environ['PASSWORD']
-# USERNAME_GUEST = os.environ['USERNAME_GUEST']
-# PASSWORD_GUEST = os.environ['PASSWORD_GUEST']
-# PASSWORD_ADMIN = os.environ['PASSWORD_ADMIN']
-# USERNAME_ADMIN = os.environ['USERNAME_ADMIN']
+# USERNAME = "christian.urich@gmail.com"#os.getenv('USERNAME')
+# PASSWORD = "rejudo01" #os.getenv('PASSWORD')
+
+USERNAME = os.getenv('USERNAME')
+PASSWORD = os.getenv('PASSWORD')
+
+USERNAME_GUEST = os.getenv('USERNAME_GUEST')
+PASSWORD_GUEST = os.getenv('PASSWORD_GUEST')
+PASSWORD_ADMIN = os.getenv('PASSWORD_ADMIN')
+USERNAME_ADMIN = os.getenv('USERNAME_ADMIN')
 
 
 def run_tutorial(queue="default"):
@@ -27,7 +31,7 @@ def run_tutorial(queue="default"):
     assert type(project_id) is int
 
     # Obtain region code
-    region_id = sti.get_region( "melbourne")
+    region_id = sti.get_region("Melbourne")
     assert type(region_id) is int
 
     # Load geoson file
@@ -45,12 +49,19 @@ def run_tutorial(queue="default"):
         "case_study_area_id": geojson_id,
     })
 
+    # Setup data model
+    region_parameters = sti.get_default_region_parameters(region_id)
+
+    assert type(region_parameters) is dict
+
+    sti.set_project_data_model(project_id, region_parameters)
+
     # Add assessment models
     lst_model = sti.get_assessment_model( "Land Surface Temperature")
-    assert type(lst_model) is int
+    assert type(lst_model) is dict
 
     # Set assessment models
-    sti.set_project_assessment_models(project_id, [{"assessment_model_id": lst_model}])
+    sti.set_project_assessment_models(project_id, [lst_model])
 
     # Create and run baseline
     baseline_id = sti.create_scenario(project_id, None)
@@ -70,24 +81,11 @@ def run_tutorial(queue="default"):
     # Print a list of available nodes
     sti.show_nodes()
 
-    #Get residential node id
-    nodes = sti.get_nodes()
-    n_id = -1
-    for n in nodes:
-        if n["name"] == "Residential":
-            n_id = n["id"]
-
-
     # Nodes are defined as below
     residential_node = {
-        "node_type_id": n_id,
+        "node_type_id": sti.get_node_id("Urban Form"),
         "area": geojson_id,
-        "parameters":
-            {
-                "dance4water_building.site_coverage": 0.6,
-                "dance4water_number_of_trees.equation": 1,
-                "dance4water_tree_spacing.equation": 22
-            }
+        "parameters": sti.get_default_parameter_dict(sti.get_node_id("Urban Form"))
     }
 
     nodes = []
@@ -126,42 +124,42 @@ def run_tutorial(queue="default"):
             break
         time.sleep(1)
     print(r['data'])
-    assert r['data'][0]['tf'] == 0.0696807189475445
+    assert r['data'][0]['tf'] == 0.0726961320006131
 
 
     # Should through an exception because access
+    # with pytest.raises(Exception) as e_info:
+    #     sti.get_project_databases(project_id)
+
+
+def test_login():
+    sti = ScenarioToolInterface()
+    sti.login(USERNAME, PASSWORD)
+    assert type(sti.token) is str
     with pytest.raises(Exception) as e_info:
-        sti.get_project_databases(project_id)
+        sti.login(USERNAME, "passwod")
+#
+def test_guest_login():
+    sti = ScenarioToolInterface()
+    sti.login(USERNAME_GUEST, PASSWORD_GUEST)
+    assert type(sti.token) is str
 
+def test_admin_login():
+    sti = ScenarioToolInterface()
+    sti.login(USERNAME_ADMIN, PASSWORD_ADMIN)
+    assert type(sti.token) is str
 
-# def test_login():
-#     assert type(sti.login(USERNAME, PASSWORD)) is str
-#     with pytest.raises(Exception) as e_info:
-#         sti.login(USERNAME, "passwod")
-#
-# def test_guest_login():
-#     assert type(sti.login(USERNAME_GUEST, PASSWORD_GUEST)) is str
-#
-# def test_admin_login():
-#     assert type(sti.login(USERNAME_ADMIN, PASSWORD_ADMIN)) is str
-#
-# def test_get_region():
-#     token = sti.login(USERNAME, PASSWORD)
-#
-#     assert type(sti.get_region(token, "melbourne")) is int
-#
-#     with pytest.raises(Exception) as e_info:
-#         sti.login(sti.get_region(token, "melbourn"))
-#
-#
-# def test_get_assessment_model():
-#     token = sti.login(USERNAME, PASSWORD)
-#
-#     assert type(sti.get_assessment_model(token, "Land Surface Temperature")) is int
-#
-#     with pytest.raises(Exception) as e_info:
-#         sti.login(sti.get_assessment_model(token, "Land Surface Temperatur"))
-#
+def test_get_region():
+    sti = ScenarioToolInterface()
+    sti.login(USERNAME, PASSWORD)
+
+    assert type(sti.get_region("melbourne")) is int
+
+def test_get_assessment_model():
+    sti = ScenarioToolInterface()
+    sti.login(USERNAME, PASSWORD)
+
+    assert type(sti.get_assessment_model("Land Surface Temperature")) is dict
 #
 # # def test_nodes():
 # #     # Login with your username and password
@@ -225,110 +223,9 @@ def run_tutorial(queue="default"):
 def test_run_tutorial():
     run_tutorial()
 #
-# # def test_run_tutorial_slow():
-# #     run_tutorial(queue="slow")
-#
-# def test_download():
-#     # Login with your username and password
-#     token = sti.login(USERNAME_ADMIN, PASSWORD_ADMIN)
-#
-#     assert type(token) is str
-#     # Create a new project
-#     project_id = sti.create_project(token)
-#     assert type(project_id) is int
-#
-#     # Obtain region code
-#     region_id = sti.get_region(token, "melbourne")
-#     assert type(region_id) is int
-#
-#     # Load geoson file
-#     with open("resources/test_small.geojson", 'r') as file:
-#         geojson_file = json.loads(file.read())
-#
-#     # Upload boundary
-#     geojson_id = sti.upload_geojson(token, geojson_file, project_id)
-#
-#     # Set project parameters
-#     sti.update_project(token, project_id, {
-#         "name": "my project small",
-#         "active": True,
-#         'region_id': region_id,
-#         "case_study_area_id": geojson_id,
-#     })
-#
-#     # Add assessment models
-#     lst_model = sti.get_assessment_model(token, "Land Surface Temperature")
-#     assert type(lst_model) is int
-#
-#     # Set assessment models
-#     sti.set_project_assessment_models(token, project_id, [{"assessment_model_id": lst_model}])
-#
-#     # Create and run baseline
-#     baseline_id = sti.create_scenario(token, project_id, None)
-#     assert type(baseline_id) is int
-#     sti.execute_scenario(token, baseline_id)
-#
-#     # Scenarios are executed asynchronous.
-#     while True:
-#         # A status code smaller than 7 means the simulation is still executed.
-#         r = sti.check_status(token, baseline_id)
-#         status = r["status"]
-#         if status > 6:
-#             break
-#         time.sleep(1)
-#
-#     # Print a list of available nodes
-#     sti.show_nodes(token)
-#
-#     # Get residential node id
-#     nodes = sti.get_nodes(token)
-#     n_id = -1
-#     for n in nodes:
-#         if n["name"] == "Residential":
-#             n_id = n["id"]
-#
-#     # Nodes are defined as below
-#     residential_node = {
-#         "node_type_id": n_id,
-#         "area": geojson_id,
-#         "parameters":
-#             {
-#                 "dance4water_building.site_coverage": 0.6,
-#                 "dance4water_number_of_trees.equation": 1,
-#                 "dance4water_tree_spacing.equation": 22
-#             }
-#     }
-#
-#     nodes = []
-#     # Several nodes can are combined to a workflow be adding them to a vector. The
-#     # nodes are executed in the order the are added
-#     nodes.append(residential_node)
-#
-#     # Scenarios need a parent. In this case we use the base line scenario created before
-#     baseline_scenario_id = sti.get_baseline(token, project_id)
-#
-#     # Crate a new scenario
-#     scenario_id = sti.create_scenario(token, project_id, baseline_scenario_id, "my new scenario")
-#     assert type(scenario_id) is int
-#     # Set workflow
-#     sti.set_scenario_workflow(token, scenario_id, nodes)
-#
-#     # Execute scenario
-#     sti.execute_scenario(token, scenario_id)
-#
-#     # Scenarios are executed asynchronous
-#     while True:
-#         # A status code smaller than 7 means the simulation is still executed.
-#         r = sti.check_status(token, scenario_id)
-#         status = r["status"]
-#         if status > 6:
-#             break
-#
-#         time.sleep(1)
-#
-#     sti.get_project_databases(token, project_id, "/tmp")
-#     assert os.path.exists(f"/tmp/{project_id}.zip")
-#
+def test_run_tutorial_slow():
+    run_tutorial(queue="slow")
+
 # def test_node_access_level():
 #     # Login with your username and password
 #     token = sti.login(USERNAME, PASSWORD)
