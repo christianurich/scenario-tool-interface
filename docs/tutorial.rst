@@ -59,23 +59,16 @@ Further for each model the performance assessment model may be defined.
     })
 
     # Setup data model
-    sti.set_project_data_model(project_id, {"data_model_id": 1, "parameters":
-                                            {"micro_climate_grid.grid_size": "20",
-                                             "district.source": 1,
-                                             "district.layer_name":
-                                             "sa1_2011_aust",
-                                             "district.epsg_from": "4283",
-                                             "parcel.source": 2,
-                                             "parcel.layer_name": "property_vic",
-                                             "parcel.epsg_from": "4283",
-                                             "landcover_geoscape.raster_file": 3
-                                            }})
+
+    region_parameters = sti.get_default_region_parameters(region_id)
+
+    sti.set_project_data_model(project_id, region_parameters)
 
     # Add assessment models
     lst_model = sti.get_assessment_model("Land Surface Temperature")
 
     # Set assessment models
-    sti.set_project_assessment_models(project_id, [{"assessment_model_id": lst_model}])
+    sti.set_project_assessment_models(project_id, [lst_model])
 
 
     # Create and run baseline
@@ -107,14 +100,9 @@ or adding trees. To show a list of a available nodes use:
 
     # Nodes are defined as below
     residential_node = {
-        "node_type_id": sti.get_node_id("Residential"),
+        "node_type_id": sti.get_node_id("Urban Form"),
         "area": geojson_id,
-        "parameters":
-            {
-                "dance4water_building.site_coverage": 0.6,
-                "dance4water_number_of_trees.equation": 1,
-                "dance4water_tree_spacing.equation": 22
-            }
+        "parameters": sti.get_default_parameter_dict(sti.get_node_id("Urban Form"))
     }
 
     nodes = []

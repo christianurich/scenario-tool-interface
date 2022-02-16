@@ -168,7 +168,7 @@ class ScenarioToolInterface:
             return r.json()
         raise Exception(f"Failed to get performance assessment model {r.status_code}, {r.json()}")
 
-    def get_assessment_model(self, model_name, owner_id=None):
+    def get_assessment_model(self, model_name: str, owner_id=None)-> dict:
         """
         Returns assessment model id
 
@@ -176,8 +176,8 @@ class ScenarioToolInterface:
         :param owner_id: If owner_id is set only models owned by the user will be returned
         :type model_name: str
         :type owner_id: int
-        :return: model_id
-        :rtype: int
+        :return: dict with assessment_model_id and default parameters
+        :rtype: dict
         """
         r = self.get_assessment_models()
 
@@ -193,14 +193,14 @@ class ScenarioToolInterface:
             raise Exception(f"Performance assessment model {model_name} not found")
 
         if len(filtered_nodes) == 1:
-            return filtered_nodes[0]["id"]
+            return {"assessment_model_id": filtered_nodes[0]["id"], "parameters": self.get_default_parameter_dict(filtered_nodes[0]["initialization_node"]) if filtered_nodes[0]["initialization_node"] else {}}
 
         # if multiple performance assessment models have been found return the one the user owns
         for n in filtered_nodes:
             if n["creator"] == self.get_my_status()["user_id"]:
-                return n["id"]
+                return {"assessment_model_id": n["id"], "parameters": self.get_default_parameter_dict(n["id"]["initialization_node"]) if n["id"]["initialization_node"] else {}}
 
-        return filtered_nodes[0]["id"]
+        return {"assessment_model_id": filtered_nodes[0]["id"], "parameters": self.get_default_parameter_dict(filtered_nodes[0]["initialization_node"]) if filtered_nodes[0]["initialization_node"] else {}}
 
     def set_project_assessment_models(self, project, models):
         r = self._put(self.api_url + "/projects/" + str(project) + "/models", models)
@@ -513,12 +513,12 @@ class ScenarioToolInterface:
         regions = r.json()
         melbourne_region_id = None
         for region in regions:
-            if region["name"].lower() == region_name:
+            if region["name"].lower() == region_name.lower():
                 melbourne_region_id = region["id"]
                 break
 
         if melbourne_region_id is None:
-            raise Exception(f"Could not find ' {region_name}")
+            raise Exception(f"Could not find '{region_name}'")
 
         return melbourne_region_id
 
@@ -945,6 +945,28 @@ class ScenarioToolInterface:
             return result["assessment_model_id"]
         raise Exception(f"Unable to create assessment model {r.status_code}, {r.json()}")
 
+
+    def get_default_region_parameters(self, region_id:int) -> dict:
+        """
+        Returns the default region parameters as dictionary
+
+        :param region_id: id of the region
+        :type name: int
+        :return: parameter dictionary
+        :rtype dict
+        """
+        data_model_id = self._get(f"{self.api_url}/regions/{region_id}/data_models").json()[0]["id"]
+        parameters = self._get(f"{self.api_url}/regions/{region_id}/data_models").json()[0]["defaults"]
+        defaults = self.get_default_parameter_dict(self._get(f"{self.api_url}/data_model/{data_model_id}/init_node").json()["id"])
+        
+        for k, v in defaults.items():
+            if k in parameters:
+                if "id" in parameters[k]:
+                    defaults[k] = parameters[k]["id"]
+                if "value" in parameters[k]:
+                    defaults[k] = parameters[k]["value"]
+        
+        return {"data_model_id":data_model_id, "parameters": defaults}
 
 
     def update_assessment_model(self, assessment_model_id, filename, model_id):
