@@ -72,7 +72,7 @@ Further for each model the performance assessment model may be defined.
 
 
     # Create and run baseline
-    baseline_id = sti.create_scenario(token, project_id, None)
+    baseline_id = sti.create_scenario(project_id, None)
     sti.execute_scenario(baseline_id)
 
     # Scenarios are executed asynchronous.
