@@ -400,12 +400,12 @@ class ScenarioToolInterface:
         regions = r.json()
         melbourne_region_id = None
         for region in regions:
-            if region["name"].lower() == region_name:
+            if region["name"].lower() == region_name.lower():
                 melbourne_region_id = region["id"]
                 break
 
         if melbourne_region_id is None:
-            raise Exception(f"Could not find ' {region_name}")
+            raise Exception(f"Could not find '{region_name}'")
 
         return melbourne_region_id
 
