@@ -160,6 +160,13 @@ def test_get_assessment_model():
     sti.login(USERNAME, PASSWORD)
 
     assert type(sti.get_assessment_model("Land Surface Temperature")) is dict
+
+
+def test_get_assessment_model_water_cycle():
+    sti = ScenarioToolInterface()
+    sti.login(USERNAME, PASSWORD)
+
+    assert type(sti.get_assessment_model("Water Cycle Model")) is dict
 #
 # # def test_nodes():
 # #     # Login with your username and password

@@ -167,6 +167,14 @@ class ScenarioToolInterface:
         if r.status_code == 200:
             return r.json()
         raise Exception(f"Failed to get performance assessment model {r.status_code}, {r.json()}")
+    
+    def _get_node_parameters(self, n):
+            try:
+                parameters = self.get_default_parameter_dict(n["id"]["initialization_node"]) if n["id"]["initialization_node"] else {}
+            except:
+                parameters = {}
+            return parameters
+
 
     def get_assessment_model(self, model_name: str, owner_id=None)-> dict:
         """
@@ -193,14 +201,14 @@ class ScenarioToolInterface:
             raise Exception(f"Performance assessment model {model_name} not found")
 
         if len(filtered_nodes) == 1:
-            return {"assessment_model_id": filtered_nodes[0]["id"], "parameters": self.get_default_parameter_dict(filtered_nodes[0]["initialization_node"]) if filtered_nodes[0]["initialization_node"] else {}}
+            return {"assessment_model_id": filtered_nodes[0]["id"], "parameters": self._get_node_parameters( filtered_nodes[0]) }
 
         # if multiple performance assessment models have been found return the one the user owns
         for n in filtered_nodes:
             if n["creator"] == self.get_my_status()["user_id"]:
-                return {"assessment_model_id": n["id"], "parameters": self.get_default_parameter_dict(n["id"]["initialization_node"]) if n["id"]["initialization_node"] else {}}
+                return {"assessment_model_id": n["id"], "parameters":self._get_node_parameters(n) }
 
-        return {"assessment_model_id": filtered_nodes[0]["id"], "parameters": self.get_default_parameter_dict(filtered_nodes[0]["initialization_node"]) if filtered_nodes[0]["initialization_node"] else {}}
+        return {"assessment_model_id": filtered_nodes[0]["id"], "parameters": self._get_node_parameters(filtered_nodes[0])}
 
     def set_project_assessment_models(self, project, models):
         r = self._put(self.api_url + "/projects/" + str(project) + "/models", models)
