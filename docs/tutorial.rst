@@ -58,6 +58,19 @@ Further for each model the performance assessment model may be defined.
         "case_study_area_id": geojson_id,
     })
 
+    # Setup data model
+    sti.set_project_data_model(project_id, {"data_model_id": 1, "parameters":
+                                            {"micro_climate_grid.grid_size": "20",
+                                             "district.source": 1,
+                                             "district.layer_name":
+                                             "sa1_2011_aust",
+                                             "district.epsg_from": "4283",
+                                             "parcel.source": 2,
+                                             "parcel.layer_name": "property_vic",
+                                             "parcel.epsg_from": "4283",
+                                             "landcover_geoscape.raster_file": 3
+                                            }})
+
     # Add assessment models
     lst_model = sti.get_assessment_model("Land Surface Temperature")
 
