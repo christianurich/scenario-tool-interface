@@ -90,7 +90,7 @@ copyright = u'2021, Christian Urich'
 # built documents.
 #
 # The short X.Y version.
-version = '0.0.3'  # Is set by calling `setup.py docs`
+version = '0.0.4'  # Is set by calling `setup.py docs`
 # The full version, including alpha/beta/rc tags.
 release = ''  # Is set by calling `setup.py docs`
 
