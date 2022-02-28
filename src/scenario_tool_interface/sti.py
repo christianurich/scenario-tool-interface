@@ -1103,3 +1103,62 @@ class ScenarioToolInterface:
         for m in models['assessment_models']:
             print(m['name'])
 
+    def _build_query_string(self, table, definitions):
+        """
+        Builds a query string from a table and a dictionary of definitions to be used to query the scenario tool interface's database
+        """
+        query = 'ogc_fid'
+        for key, t in definitions[table].items():
+            query+=','
+            if t == 'DOUBLEVECTOR':
+                query+=f'dm_vector_to_string({key}) as {key}'
+                continue
+            query+= key
+        return query
+
+    def get_results(self, scenario_id: int, results_tables: list) -> dict:
+        """
+        Get results from scenario tool interface for tables defined in the results tables list.
+
+        :param scenario_id: scenario to be queried for results
+        :type scenario_id: int
+        :param results_tables: list of tables that should be queried for typlical tables include building, parcel, ...
+        :type results_tables: list
+        :return: dict with dict for each tables with results as a numpy array. We recommend to use the numpy array to create a pandas dataframe.
+        :rtype dict
+        """
+        import numpy as np
+        while True:
+            r = self.run_query(scenario_id, "SELECT view_name, attribute_name, data_type from dynamind_table_definitions")
+            if r['status'] == 'loaded':
+                break
+            if r['status'] == 'error':
+                print(r)
+                break
+        definitions = {}
+        for entry in r['data']:
+            if entry['view_name'] not in definitions:
+                definitions[entry['view_name']] = {}
+            if "}" in entry['attribute_name']:
+                continue
+            if entry['attribute_name'] != 'DEFINITION':  
+                definitions[entry['view_name']][entry['attribute_name']] =  entry['data_type']
+
+
+        results = {}
+        for table in results_tables:
+            while True:
+                query = f"SELECT {self._build_query_string(table, definitions)} from {table}"
+                r = self.run_query(scenario_id, query)
+                if r['status'] == 'loaded':
+                    results[table] = []
+                    for row in r['data']:
+                        converted_row = {}
+                        for key, val in row.items():
+                            converted_row[key] = val
+                            if key in definitions[table]:
+                                if definitions[table][key] == 'DOUBLEVECTOR':
+                                    converted_row[key] = np.array([float(d) for d in val.split(" ")])
+                        results[table].append(converted_row)
+                    break
+        return results
