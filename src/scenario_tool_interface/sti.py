@@ -1162,3 +1162,30 @@ class ScenarioToolInterface:
                         results[table].append(converted_row)
                     break
         return results
+
+    def get_database_structure(self, scenario_id: int) -> dict:
+        """
+        Get database structure 
+
+        :param scenario_id: scenario to be queried for results
+        :type scenario_id: int
+        :return: dict of tables and their attributes
+        :rtype dict
+        """
+        while True:
+            r = self.run_query(scenario_id, "SELECT view_name, attribute_name, data_type from dynamind_table_definitions")
+            if r['status'] == 'loaded':
+                break
+            if r['status'] == 'error':
+                return r
+                break
+        definitions = {}
+        for entry in r['data']:
+            if entry['view_name'] not in definitions:
+                definitions[entry['view_name']] = {}
+            if "}" in entry['attribute_name']:
+                continue
+            if entry['attribute_name'] != 'DEFINITION':  
+                definitions[entry['view_name']][entry['attribute_name']] =  entry['data_type']
+        return definitions
+
