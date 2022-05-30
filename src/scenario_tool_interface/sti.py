@@ -1223,7 +1223,7 @@ class ScenarioToolInterface:
             if key in data_model:
                 raise Exception(f"Updating {key} not supported")
 
-        r = self._put(f"{self.api_url}/data_model/{data_model_id}")
+        r = self._put(f"{self.api_url}/data_model/{data_model_id}", data_model)
         if r.status_code == 200:
             return r.json()
 
