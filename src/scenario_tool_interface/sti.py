@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from csv import DictReader
 import requests
 import json
 import time
@@ -1189,3 +1190,41 @@ class ScenarioToolInterface:
                 definitions[entry['view_name']][entry['attribute_name']] =  entry['data_type']
         return definitions
 
+    def get_data_model(self, data_model_id: int) -> dict:
+        """
+        Get data model 
+
+        :param data_model_id: model to be queried for results
+        :type data_model_id: int
+        :return: dict of data model
+        :rtype dict
+        """
+
+        r = self._get(f"{self.api_url}/data_model/{data_model_id}")
+        if r.status_code == 200:
+            return r.json()
+
+        raise Exception(f"Something went wrong {r.status_code} {r.json()}")
+
+
+    def update_data_model(self, data_model_id: int, data_model: dict):
+        """
+        Update data model 
+
+        :param data_model_id: model to be queried for results
+        :type data_model_id: int
+        :param data_model: data model to be updated
+        :type data_model: dict
+        """
+
+        not_supported_keys = ["geo_data", "available_datasets", "defaults"]
+
+        for key in not_supported_keys:
+            if key in data_model:
+                raise Exception(f"Updating {key} not supported")
+
+        r = self._put(f"{self.api_url}/data_model/{data_model_id}")
+        if r.status_code == 200:
+            return r.json()
+
+        raise Exception(f"Something went wrong {r.status_code} {r.json()}")
