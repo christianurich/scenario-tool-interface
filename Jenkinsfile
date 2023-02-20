@@ -29,9 +29,9 @@ pipeline {
         }
   }
   environment {
-    PASSWORD = credentials('test@unit.com')
-    PASSWORD_GUEST = credentials('guest@unit.com')
-    PASSWORD_ADMIN = credentials('admin@danceplatform.org')
+    // PASSWORD = credentials('test@unit.com')
+    // PASSWORD_GUEST = credentials('guest@unit.com')
+    // PASSWORD_ADMIN = credentials('admin@danceplatform.org')
     USERNAME_PYPI = credentials('pypi_user')
     PASSWORD_PYPI = credentials('pypi_pass')
     UNIQUE_ID = UUID.randomUUID().toString()
