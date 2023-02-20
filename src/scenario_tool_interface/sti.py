@@ -18,8 +18,8 @@ class AccessLevel(enum.Enum):
 
 class ScenarioToolInterface:
 
-    def __init__(self, api_url="https://stable-api.dance4water.org/api",
-                 results_url="https://stable-sql.dance4water.org/resultsdb/"):
+    def __init__(self, api_url="https://stable-api.harc-dev.com.au/api",
+                 results_url="https://stable-sql.harc-dev.com.au/resultsdb/"):
         self.api_url = api_url
         self.results_url = results_url
 
@@ -35,7 +35,7 @@ class ScenarioToolInterface:
         counter = 0
         while True:
             r = requests.post(self.api_url + "/user/login/", json={'username': username,
-                                                                   'password': password})
+                                                                   'password': password}, verify=False)
             counter += 1
             if r.status_code == 200:
                 self.token = r.json()["access_token"]
@@ -53,7 +53,7 @@ class ScenarioToolInterface:
             raise Exception(f"User not authenticated, GET FAILED, {url}")
 
         headers = {"Authorization": "Bearer " + self.token}
-        return requests.get(url, headers=headers)
+        return requests.get(url, headers=headers, verify=False)
 
     def _put(self, url, data={}):
 
@@ -61,7 +61,7 @@ class ScenarioToolInterface:
             raise Exception(f"User not authenticated, PUT FAILED, {url}")
 
         headers = {"Authorization": "Bearer " + self.token}
-        return requests.put(url, json=data, headers=headers)
+        return requests.put(url, json=data, headers=headers, verify=False)
 
     def _post(self, url, data={}):
 
@@ -69,7 +69,7 @@ class ScenarioToolInterface:
             raise Exception(f"User not authenticated, {url}")
 
         headers = {"Authorization": "Bearer " + self.token}
-        return requests.post(url, json=data, headers=headers)
+        return requests.post(url, json=data, headers=headers, verify=False)
 
     def db_name(self, simulation_id):
         return simulation_id
