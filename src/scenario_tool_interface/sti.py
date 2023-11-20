@@ -141,7 +141,7 @@ class ScenarioToolInterface:
         :rtype: int
         """
 
-        r = self._post(self.api_url + "/projects")
+        r = self._post(self.api_url + "/projects/")
 
         if r.status_code == 200:
             return r.json()["id"]
